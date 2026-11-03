@@ -1,0 +1,2221 @@
+{
+  "version": 1,
+  "texts": {
+    "activity.5bbcac595bc6": {
+      "group": "activity",
+      "default": "顺序播放",
+      "max": 1800,
+      "required": false
+    },
+    "activity.2fe0943eacb3": {
+      "group": "activity",
+      "default": "列表循环",
+      "max": 1800,
+      "required": false
+    },
+    "activity.8cde791504d2": {
+      "group": "activity",
+      "default": "单曲循环",
+      "max": 1800,
+      "required": false
+    },
+    "activity.f34b7ce61098": {
+      "group": "activity",
+      "default": "随机播放",
+      "max": 1800,
+      "required": false
+    },
+    "activity.4a366fb92e53": {
+      "group": "activity",
+      "default": "网易云音乐",
+      "max": 1800,
+      "required": false
+    },
+    "activity.ea6bce19dfee": {
+      "group": "activity",
+      "default": "界面初始化失败，请关闭后重新打开点歌台。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.89c4766afc85": {
+      "group": "activity",
+      "default": "连接失败",
+      "max": 1800,
+      "required": false
+    },
+    "activity.e6f03404ead9": {
+      "group": "activity",
+      "default": "尚未连接成功，请先完成 Discord 登录。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.d2b818113a29": {
+      "group": "activity",
+      "default": "这次操作没有完成，请稍后再试。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.dd166b36884f": {
+      "group": "activity",
+      "default": "这一场，先轻轻谢幕。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.40d19cd46c26": {
+      "group": "activity",
+      "default": "今晚，想听哪一首？",
+      "max": 1800,
+      "required": false
+    },
+    "activity.08d5f92ca9e9": {
+      "group": "activity",
+      "default": "MUSIC",
+      "max": 1800,
+      "required": false
+    },
+    "activity.a68a0e327568": {
+      "group": "activity",
+      "default": "YOUR LITTLE MUSIC ROOM",
+      "max": 1800,
+      "required": false
+    },
+    "activity.dd29e49d530a": {
+      "group": "activity",
+      "default": "重新打开点歌台，就能开始一份新歌单。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.16e945e90af3": {
+      "group": "activity",
+      "default": "正在准备这一曲，马上就好。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.f6cc4ac99ee4": {
+      "group": "activity",
+      "default": "让旋律陪我们待一会儿。♪",
+      "max": 1800,
+      "required": false
+    },
+    "activity.c9aa5cfc59b4": {
+      "group": "activity",
+      "default": "把喜欢的旋律交给我吧。♪",
+      "max": 1800,
+      "required": false
+    },
+    "activity.d79b1d0e5c61": {
+      "group": "activity",
+      "default": "已结束",
+      "max": 1800,
+      "required": false
+    },
+    "activity.e6666b2eb332": {
+      "group": "activity",
+      "default": "正在播放",
+      "max": 1800,
+      "required": false
+    },
+    "activity.eb0c326b60ae": {
+      "group": "activity",
+      "default": "已暂停",
+      "max": 1800,
+      "required": false
+    },
+    "activity.b53be09930f4": {
+      "group": "activity",
+      "default": "准备中",
+      "max": 1800,
+      "required": false
+    },
+    "activity.aa156aa67a6d": {
+      "group": "activity",
+      "default": "等待点歌",
+      "max": 1800,
+      "required": false
+    },
+    "activity.8d12fc0d4eb2": {
+      "group": "activity",
+      "default": "暂停",
+      "max": 1800,
+      "required": false
+    },
+    "activity.c3396195e91c": {
+      "group": "activity",
+      "default": "播放",
+      "max": 1800,
+      "required": false
+    },
+    "activity.f55ff7e7510c": {
+      "group": "activity",
+      "default": "房间会话已结束",
+      "max": 1800,
+      "required": false
+    },
+    "activity.20473bc27a72": {
+      "group": "activity",
+      "default": "{participants} 人正在使用",
+      "max": 1800,
+      "required": false
+    },
+    "activity.f338a7ebf6a4": {
+      "group": "activity",
+      "default": "第 {value1} / {pages} 页 · 每页 50 首",
+      "max": 1800,
+      "required": false
+    },
+    "activity.b15227b1c946": {
+      "group": "activity",
+      "default": "播放 {title}",
+      "max": 1800,
+      "required": false
+    },
+    "activity.db9514212493": {
+      "group": "activity",
+      "default": "音乐",
+      "max": 1800,
+      "required": false
+    },
+    "activity.23b39424a795": {
+      "group": "activity",
+      "default": "向前移动",
+      "max": 1800,
+      "required": false
+    },
+    "activity.9f3d235d58da": {
+      "group": "activity",
+      "default": "向后移动",
+      "max": 1800,
+      "required": false
+    },
+    "activity.f24f7e5e2fbc": {
+      "group": "activity",
+      "default": "移除 {title}",
+      "max": 1800,
+      "required": false
+    },
+    "activity.3c7a4fb3566d": {
+      "group": "activity",
+      "default": "确认清空",
+      "max": 1800,
+      "required": false
+    },
+    "activity.65a1e36a1baf": {
+      "group": "activity",
+      "default": "确认结束",
+      "max": 1800,
+      "required": false
+    },
+    "activity.56d3b7cbe694": {
+      "group": "activity",
+      "default": "正在加入…",
+      "max": 1800,
+      "required": false
+    },
+    "activity.dd44ca603959": {
+      "group": "activity",
+      "default": "正在识别链接…",
+      "max": 1800,
+      "required": false
+    },
+    "activity.b2e9f0ccbdcb": {
+      "group": "activity",
+      "default": "正在找歌…",
+      "max": 1800,
+      "required": false
+    },
+    "activity.194475ac14b0": {
+      "group": "activity",
+      "default": "加入歌单 ＋",
+      "max": 1800,
+      "required": false
+    },
+    "activity.d8ed4ca5cf23": {
+      "group": "activity",
+      "default": "先听这一首？",
+      "max": 1800,
+      "required": false
+    },
+    "activity.d98788d8cd93": {
+      "group": "activity",
+      "default": "发现一个 UP 主合集",
+      "max": 1800,
+      "required": false
+    },
+    "activity.af71bdb5bc52": {
+      "group": "activity",
+      "default": "发现一个分 P 合集",
+      "max": 1800,
+      "required": false
+    },
+    "activity.4cf86e0dc04c": {
+      "group": "activity",
+      "default": "发现一个合集",
+      "max": 1800,
+      "required": false
+    },
+    "activity.05e72e38cdc1": {
+      "group": "activity",
+      "default": "暂时无法确认完整合集信息，你仍可单独加入这个视频。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.8c7ccb1df815": {
+      "group": "activity",
+      "default": "UP 主合集当前可加入 {count} 个视频。选择链接中的这一首，或按合集顺序全部加入。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.e5d9d6520c0e": {
+      "group": "activity",
+      "default": "这个链接属于一个合集，可加入 {count} 首。你想听哪一部分？",
+      "max": 1800,
+      "required": false
+    },
+    "activity.1cdbb9b3ffda": {
+      "group": "activity",
+      "default": "只加入第一首",
+      "max": 1800,
+      "required": false
+    },
+    "activity.4ef2dbac0613": {
+      "group": "activity",
+      "default": "只加入这一首",
+      "max": 1800,
+      "required": false
+    },
+    "activity.83f4dab2e86f": {
+      "group": "activity",
+      "default": " · 已略过 {skipped} 个不可用或超长条目",
+      "max": 1800,
+      "required": false
+    },
+    "activity.61fc4654e1fe": {
+      "group": "activity",
+      "default": "{count} 首，按原顺序加入{value2}",
+      "max": 1800,
+      "required": false
+    },
+    "activity.0ee946ea5f9f": {
+      "group": "activity",
+      "default": "这次没能识别链接，请稍后再试。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.c37059a3d9df": {
+      "group": "activity",
+      "default": "正在搜索…",
+      "max": 1800,
+      "required": false
+    },
+    "activity.c01a4d18b45e": {
+      "group": "activity",
+      "default": "搜索歌曲 ⌕",
+      "max": 1800,
+      "required": false
+    },
+    "activity.8f40c463c20b": {
+      "group": "activity",
+      "default": "已加入 ✓",
+      "max": 1800,
+      "required": false
+    },
+    "activity.b1d87f6c28cc": {
+      "group": "activity",
+      "default": "加入中…",
+      "max": 1800,
+      "required": false
+    },
+    "activity.f362cfc20fdb": {
+      "group": "activity",
+      "default": "＋ 加入",
+      "max": 1800,
+      "required": false
+    },
+    "activity.2e9764abbf75": {
+      "group": "activity",
+      "default": "正在把《{title}》加入歌单…",
+      "max": 1800,
+      "required": false
+    },
+    "activity.8f8575f6623b": {
+      "group": "activity",
+      "default": "已加入歌单，可以继续选歌。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.87d66ad239bb": {
+      "group": "activity",
+      "default": "这首暂时没能加入，请再试一次。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.cd45813af643": {
+      "group": "activity",
+      "default": "这次还没找到合适的版本，换个歌名或加上歌手再试试。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.68d816633537": {
+      "group": "activity",
+      "default": "时长未知",
+      "max": 1800,
+      "required": false
+    },
+    "activity.f76fb7c2ec9a": {
+      "group": "activity",
+      "default": "加入 {title}",
+      "max": 1800,
+      "required": false
+    },
+    "activity.a483e6303ea2": {
+      "group": "activity",
+      "default": "单平台 {perPlatform} 首",
+      "max": 1800,
+      "required": false
+    },
+    "activity.7451ccc32695": {
+      "group": "activity",
+      "default": "{length} 个平台各 {perPlatform} 首，共 {total} 首",
+      "max": 1800,
+      "required": false
+    },
+    "activity.daec3bcce471": {
+      "group": "activity",
+      "default": "正在 {names} 寻找旋律…",
+      "max": 1800,
+      "required": false
+    },
+    "activity.650f29544d73": {
+      "group": "activity",
+      "default": "找到 {length} 个版本，选择喜欢的加入歌单。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.e99811a69d56": {
+      "group": "activity",
+      "default": "没有找到结果。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.4780fe445bc4": {
+      "group": "activity",
+      "default": "搜索暂时没有完成，请稍后重试。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.99b164abab32": {
+      "group": "activity",
+      "default": "结束这场听歌？",
+      "max": 1800,
+      "required": false
+    },
+    "activity.0f09d74afd6f": {
+      "group": "activity",
+      "default": "将停止本频道的音乐、清空歌单，并让房间里的伙伴退出 Activity。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.5e6c5ef8abeb": {
+      "group": "activity",
+      "default": "清空今夜的歌单？",
+      "max": 1800,
+      "required": false
+    },
+    "activity.307a263cc325": {
+      "group": "activity",
+      "default": "会停止当前歌曲并移除本频道的所有歌曲，点歌台仍然保持打开。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.07c8df243c3d": {
+      "group": "activity",
+      "default": "正在同步频道",
+      "max": 1800,
+      "required": false
+    },
+    "activity.1450ce36107f": {
+      "group": "activity",
+      "default": "正在连接服务",
+      "max": 1800,
+      "required": false
+    },
+    "activity.ceb8f61823b7": {
+      "group": "activity",
+      "default": "点歌台服务暂时不可用，请稍后重新打开。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.87937bfbd49f": {
+      "group": "activity",
+      "default": "请从 Discord 语音频道打开点歌台。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.3eecca8b4742": {
+      "group": "activity",
+      "default": "{label}超时，请关闭点歌台后重试。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.30e08d24f46b": {
+      "group": "activity",
+      "default": "请在 Discord 语音频道中打开 Yachiyo Activity。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.77e049867eb2": {
+      "group": "activity",
+      "default": "正在连接 Discord",
+      "max": 1800,
+      "required": false
+    },
+    "activity.e33aa3436317": {
+      "group": "activity",
+      "default": "请从服务器的普通语音频道打开点歌台。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.d73a13b90022": {
+      "group": "activity",
+      "default": "正在等待 Discord 登录授权",
+      "max": 1800,
+      "required": false
+    },
+    "activity.b43bb707325c": {
+      "group": "activity",
+      "default": "登录校验未通过，请重新打开点歌台。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.3f8bffa91265": {
+      "group": "activity",
+      "default": "正在验证频道身份",
+      "max": 1800,
+      "required": false
+    },
+    "activity.2c17a58d3dfd": {
+      "group": "activity",
+      "default": "正在完成 Discord 登录",
+      "max": 1800,
+      "required": false
+    },
+    "activity.afd942c5d632": {
+      "group": "activity",
+      "default": "点歌台已结束，正在退出 Activity…",
+      "max": 1800,
+      "required": false
+    },
+    "activity.71167409585a": {
+      "group": "activity",
+      "default": "点歌台已结束，请手动关闭 Activity。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.2118db23c089": {
+      "group": "activity",
+      "default": "点歌台已结束，请重新打开。",
+      "max": 1800,
+      "required": false
+    },
+    "activity.28c3a151672d": {
+      "group": "activity",
+      "default": "点歌台登录已过期，请关闭后重新打开。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.af02a8c4b73b": {
+      "group": "bot",
+      "default": "把想听的歌交给我吧 ♪ 播放或加入歌单",
+      "max": 100,
+      "required": true
+    },
+    "bot.1100a24ef8ba": {
+      "group": "bot",
+      "default": "YouTube 视频/播放列表、B站单集/合集或网易云单曲 HTTPS 链接",
+      "max": 100,
+      "required": true
+    },
+    "bot.3b1a399f5457": {
+      "group": "bot",
+      "default": "翻开今夜的歌单，看看接下来有哪些旋律",
+      "max": 100,
+      "required": true
+    },
+    "bot.e315846d3dd3": {
+      "group": "bot",
+      "default": "为这一曲谢幕，切到下一首",
+      "max": 100,
+      "required": true
+    },
+    "bot.5fadf2cbf258": {
+      "group": "bot",
+      "default": "让旋律稍稍休息，暂停播放",
+      "max": 100,
+      "required": true
+    },
+    "bot.fc9d9ee90714": {
+      "group": "bot",
+      "default": "接上刚才的旋律，继续播放",
+      "max": 100,
+      "required": true
+    },
+    "bot.b8c201ae9424": {
+      "group": "bot",
+      "default": "结束这一场听歌，清空歌单并退出语音频道",
+      "max": 100,
+      "required": true
+    },
+    "bot.ea3931a680e1": {
+      "group": "bot",
+      "default": "🌙 接下来，把舞台交给《{title}》。准备好了吗？一起听吧。♪",
+      "max": 1800,
+      "required": false
+    },
+    "bot.be0878cfe66b": {
+      "group": "bot",
+      "default": "愿望收到。《{title}》已经加入歌单啦，等它的旋律来到你身边。♪",
+      "max": 1800,
+      "required": false
+    },
+    "bot.428ef48c13e6": {
+      "group": "bot",
+      "default": "另有 {skipped} 个不可用或超长条目已跳过。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.ba8f8295ba1a": {
+      "group": "bot",
+      "default": "《{title}》已按顺序加入 {count} 首。{value3}让旋律一首一首登场吧。♪",
+      "max": 1800,
+      "required": false
+    },
+    "bot.34f7c97e0ff0": {
+      "group": "bot",
+      "default": "下一首马上登场。♪",
+      "max": 1800,
+      "required": false
+    },
+    "bot.de942efaf14e": {
+      "group": "bot",
+      "default": "歌单暂时空了，再点一首你想听的歌吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.49ec19409ecc": {
+      "group": "bot",
+      "default": "《{title}》先在这里谢幕吧。{value2}",
+      "max": 1800,
+      "required": false
+    },
+    "bot.fb70bda70377": {
+      "group": "bot",
+      "default": "旋律暂停了。去忙你的事吧，想继续听时，用 /resume 叫我就好。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.50df835a6f65": {
+      "group": "bot",
+      "default": "回来了？那就接上刚才的旋律，继续一起听吧。♪",
+      "max": 1800,
+      "required": false
+    },
+    "bot.53a3e7b0cfed": {
+      "group": "bot",
+      "default": "音乐已经暂停啦。不用着急，我在这里等你回来。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.441681589224": {
+      "group": "bot",
+      "default": "旋律正好好地流淌着呢，已经在播放啦。♪",
+      "max": 1800,
+      "required": false
+    },
+    "bot.4a9dd32e37c6": {
+      "group": "bot",
+      "default": "这一曲还在准备上场，暂时不能暂停。等音乐响起来，再叫我吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.01ea6346078c": {
+      "group": "bot",
+      "default": "这一曲还没有准备好继续播放。稍等一下；若一直没有声音，可以 /skip 换一首。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.7fdd6126849a": {
+      "group": "bot",
+      "default": "今夜的歌单已经清空，我也先离开语音频道啦。下次想听歌，记得再叫我。🌙",
+      "max": 1800,
+      "required": false
+    },
+    "bot.45dc3caf0800": {
+      "group": "bot",
+      "default": "这里已经安静下来啦，歌单也是空的。想开场时，交给我一首歌就好。♪",
+      "max": 1800,
+      "required": false
+    },
+    "bot.3cb252d2c39d": {
+      "group": "bot",
+      "default": "歌单已经安静了 {minutes} 分钟，我先轻轻谢幕，离开语音频道啦。想再听歌时，用 /play 叫我回来就好。🌙",
+      "max": 1800,
+      "required": false
+    },
+    "bot.42a732ec18cf": {
+      "group": "bot",
+      "default": "🌙 今夜的歌单",
+      "max": 1800,
+      "required": false
+    },
+    "bot.af3f329789cd": {
+      "group": "bot",
+      "default": "暂停中的旋律",
+      "max": 1800,
+      "required": false
+    },
+    "bot.8e09315dd4ec": {
+      "group": "bot",
+      "default": "此刻的旋律",
+      "max": 1800,
+      "required": false
+    },
+    "bot.7f13c0f2ddb5": {
+      "group": "bot",
+      "default": "舞台暂时安静着，来点一首你喜欢的歌吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.80b3d4e93a33": {
+      "group": "bot",
+      "default": "接下来还没有安排。下一首，由你来选。♪",
+      "max": 1800,
+      "required": false
+    },
+    "bot.9fea6875a92a": {
+      "group": "bot",
+      "default": "等待登场 · {length} 首",
+      "max": 1800,
+      "required": false
+    },
+    "bot.bb7c527bb61b": {
+      "group": "bot",
+      "default": "还有 {value1} 首在后台等候。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.6054d70a6e02": {
+      "group": "bot",
+      "default": "先让下一首登场吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.8834540a04f1": {
+      "group": "bot",
+      "default": "这首已从队列移出；检查链接或登录状态后，可以再点一次。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.ab1656302d05": {
+      "group": "bot",
+      "default": "哎呀，《{title}》这次没能顺利唱完。可能是登录权限、地区限制或音频下载出了问题。{value2}",
+      "max": 1800,
+      "required": false
+    },
+    "bot.aa21e9569878": {
+      "group": "bot",
+      "default": "别急，我试试下一首。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.257ebf24143c": {
+      "group": "bot",
+      "default": "歌单暂时没有下一首，请重新点歌；若反复中断，再检查主机的播放日志。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.d7f508deb6f3": {
+      "group": "bot",
+      "default": "旋律突然中断了呢。{value1}",
+      "max": 1800,
+      "required": false
+    },
+    "bot.8c08cf2a9a39": {
+      "group": "bot",
+      "default": "通往语音舞台的连接断开了呢。这次歌单会先清空，网络恢复后，再用 /play 叫我回来吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.54d07d35c5c7": {
+      "group": "bot",
+      "default": "还没有名字的旋律",
+      "max": 1800,
+      "required": false
+    },
+    "bot.c70b30ef8b4f": {
+      "group": "bot",
+      "default": "这次没能读全合集，请检查链接和访问权限后重试。为了避免漏歌，我没有只加入第一首。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.90c3889e9900": {
+      "group": "bot",
+      "default": "这个合集超过了单次 500 首的上限，请使用较小的播放列表，或选一首单独加入。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.e15a5520e238": {
+      "group": "bot",
+      "default": "这个合集没有找到可加入的条目，可能包含直播、私密视频或超过两小时的内容。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.d6253df669db": {
+      "group": "bot",
+      "default": "当前歌单剩余空间不足以完整加入这个合集。每个房间最多 500 首，请先整理歌单后再试。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.1a9ea74dea7d": {
+      "group": "bot",
+      "default": "请输入 1～100 字的歌名，或歌名加歌手。完整链接可以粘贴到下方加入歌单。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.08800e2fac44": {
+      "group": "bot",
+      "default": "现在找歌的人有点多，稍等片刻再搜索吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.889622411066": {
+      "group": "bot",
+      "default": "所选平台暂时没能完成搜索，请稍后再试或换个平台；也可以直接粘贴歌曲链接。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.472e2fe1d941": {
+      "group": "bot",
+      "default": "这个进度暂时跳不过去。请等歌曲准备好，再选择歌曲时长范围内的位置。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.ebd6fc6ac127": {
+      "group": "bot",
+      "default": "这种播放方式还没有准备好，请从点歌台里的选项中选择。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.50e90580f472": {
+      "group": "bot",
+      "default": "这一场听歌已经结束，歌单也已清空。重新打开点歌台，就能开始新的旋律。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.32ed17b8a51b": {
+      "group": "bot",
+      "default": "我正在另一个语音频道演出。请等那边结束后再开始，本频道的歌单不会混过去。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.7dc1c34bc1c7": {
+      "group": "bot",
+      "default": "请从你所在的普通语音频道打开 Yachiyo 点歌台，再来一起听歌吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.62bcd2db4c93": {
+      "group": "bot",
+      "default": "这次操作没能读懂，请刷新点歌台后再试一次。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.3e84ed3c15ac": {
+      "group": "bot",
+      "default": "音频缓存暂时没有空位了，等当前歌曲结束后再试一次吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.c45d7a48e7fd": {
+      "group": "bot",
+      "default": "这一曲的音频没有完整准备好。请检查链接或登录状态，再点一次试试。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.2fc09f193a12": {
+      "group": "bot",
+      "default": "呵呵，我的舞台在另一边呢。请到为我配置的 Discord 服务器来找我吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.a6e15de35420": {
+      "group": "bot",
+      "default": "想一起听歌吗？先加入一个普通语音频道，我就来。Stage 舞台频道暂时还不支持哦。♪",
+      "max": 1800,
+      "required": false
+    },
+    "bot.920911d58822": {
+      "group": "bot",
+      "default": "我正在另一个语音频道陪大家听歌呢。先加入我所在的频道，再把想听的歌告诉我吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.62d306bf6bc9": {
+      "group": "bot",
+      "default": "稍等一下，我还在寻找上一位点的旋律。等这次解析结束，再把你的那首交给我吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.f38ac4dbb437": {
+      "group": "bot",
+      "default": "呵呵，今夜的节目很热闹呢。歌单已经满啦，先整理一下歌单再来点歌吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.34948ef458ab": {
+      "group": "bot",
+      "default": "这次点歌已经取消啦。改变主意也没关系，想听的时候再来找我。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.c587f63d2710": {
+      "group": "bot",
+      "default": "咦，你已经离开刚才的语音频道了呢。先加入想听歌的频道，再点一次吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.2d6cb4d3eb62": {
+      "group": "bot",
+      "default": "想把旋律送到大家耳边，还需要「查看频道」「连接」和「说话」权限。请让管理员为我打开这些权限吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.c28be5dbdaa3": {
+      "group": "bot",
+      "default": "让你久等了，语音频道还是没连上。请检查运行我的主机网络和出站 UDP，再点一次歌吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.13ba20b705ee": {
+      "group": "bot",
+      "default": "现在还没有音乐在播放呢。用 /play 点一首喜欢的歌，让舞台亮起来吧。♪",
+      "max": 1800,
+      "required": false
+    },
+    "bot.2c4e1a86742d": {
+      "group": "bot",
+      "default": "这份邀请还缺一点线索呢。请给我完整的音乐或视频网页链接，比如 https://music.163.com/song?id=歌曲ID。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.535a0fc59ed3": {
+      "group": "bot",
+      "default": "想找到这首旋律，请发来以 https:// 开头的普通平台链接，不要附上账号密码或自定义端口哦。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.d375de637701": {
+      "group": "bot",
+      "default": "这条路我暂时还不认识呢。目前能接住的愿望来自 YouTube、B站和网易云音乐，请换一个这些平台的链接吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.cade805c64c3": {
+      "group": "bot",
+      "default": "找这首歌花的时间有点久，这次解析已经超时了。稍后再点一次吧；若总是这样，请检查主机网络。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.9c60a9fc1b2f": {
+      "group": "bot",
+      "default": "平台一下送来了太多信息，这次解析只好先停下。试试单首歌曲或单个视频的链接吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.1beb96f965d9": {
+      "group": "bot",
+      "default": "找歌的小帮手 yt-dlp 没能启动。请在运行我的主机上执行 1-install.cmd，再来试一次。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.f41917667b3d": {
+      "group": "bot",
+      "default": "这次还没能找到可播放的音频。请先确认链接有效，再检查登录 Cookie、账号权限和地区限制；网页登录不会自动同步给我哦。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.1a26f760f730": {
+      "group": "bot",
+      "default": "平台送来的歌曲信息没能读懂。请重试；若仍失败，更新 yt-dlp 后再把链接交给我吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.261747fc40ed": {
+      "group": "bot",
+      "default": "这类内容暂时还不能直接播放。请换成普通单曲或视频链接；直播和互动视频暂不支持。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.847a0db6e0f2": {
+      "group": "bot",
+      "default": "这场演出有点太长啦。单次播放最多两小时，请换一个更短的音乐或视频链接吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.c5893eb01801": {
+      "group": "bot",
+      "default": "我听见你的请求了，但 Discord 的频道权限挡住了我。请让管理员检查查看频道、发消息、连接和说话权限。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.73ec674890af": {
+      "group": "bot",
+      "default": "刚才的频道好像不见了呢。请回到一个仍然可用的频道，再试一次吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.f9f266d5ce21": {
+      "group": "bot",
+      "default": "哎呀，这次请求没能顺利完成。稍后再试一次吧；若还是不行，请查看 Bot 日志，我们一起找出原因。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.22f049eeb440": {
+      "group": "bot",
+      "default": "这个愿望我还没学会呢。请从当前的 /play、/queue、/skip、/pause、/resume、/stop 里选一个吧。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.49c5bb5d1a21": {
+      "group": "bot",
+      "default": "🌙 开场前还差一步：请在 .env 中填写 DISCORD_TOKEN 和正确的 GUILD_ID。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.c1d767c6b30d": {
+      "group": "bot",
+      "default": "Bot ready: {tag} · 🌙 Yachiyo 的舞台准备好了，等你来点歌。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.6a96ecea4802": {
+      "group": "bot",
+      "default": "🌙 指令还没能登上舞台：请检查服务器 ID、Bot 邀请权限和网络连接。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.f5e553417450": {
+      "group": "bot",
+      "default": "🌙 今夜暂时没能上线：请检查 Bot Token 和主机网络连接。",
+      "max": 1800,
+      "required": false
+    },
+    "bot.dad9dfb84fac": {
+      "group": "bot",
+      "default": "[Yachiyo] 请求处理失败，错误类型/代码：{code}",
+      "max": 1800,
+      "required": false
+    },
+    "room.d1bd19acc78d": {
+      "group": "room",
+      "default": "Activity 配置不完整，请阅读 ACTIVITY.md。",
+      "max": 1800,
+      "required": false
+    },
+    "room.555234e4997d": {
+      "group": "room",
+      "default": "打开月夜点歌台，用按钮一起管理歌单",
+      "max": 100,
+      "required": true
+    },
+    "room.eb8337a81e78": {
+      "group": "room",
+      "default": "Activity 启动失败，请核对配置、端口及 Discord 应用权限。",
+      "max": 1800,
+      "required": false
+    },
+    "room.7172ba77f214": {
+      "group": "room",
+      "default": "页面不存在。",
+      "max": 1800,
+      "required": false
+    },
+    "room.ca63201ad8f2": {
+      "group": "room",
+      "default": "点歌台界面尚未构建，请运行 npm run activity:build。",
+      "max": 1800,
+      "required": false
+    },
+    "room.5c882a51906f": {
+      "group": "room",
+      "default": "封面暂不可用。",
+      "max": 1800,
+      "required": false
+    },
+    "room.ecce0fb9d916": {
+      "group": "room",
+      "default": "不支持此请求。",
+      "max": 1800,
+      "required": false
+    },
+    "room.04ea79c8c1c8": {
+      "group": "room",
+      "default": "请从 Discord 中打开点歌台。",
+      "max": 1800,
+      "required": false
+    },
+    "room.167b0d7caba3": {
+      "group": "room",
+      "default": "请求有些频繁，请稍后再试。",
+      "max": 1800,
+      "required": false
+    },
+    "room.271e65699350": {
+      "group": "room",
+      "default": "会话已过期，请重新打开点歌台。",
+      "max": 1800,
+      "required": false
+    },
+    "room.cb07fdb7d445": {
+      "group": "room",
+      "default": "链接识别有些频繁，稍等一下再试。",
+      "max": 1800,
+      "required": false
+    },
+    "room.cdad15b6b629": {
+      "group": "room",
+      "default": "搜索暂不可用，请稍后重试。",
+      "max": 1800,
+      "required": false
+    },
+    "room.fd51151abcd0": {
+      "group": "room",
+      "default": "搜索有些频繁，稍等一下再试。",
+      "max": 1800,
+      "required": false
+    },
+    "room.ce9d13d07fdf": {
+      "group": "room",
+      "default": "操作有些频繁，稍等一下再试。",
+      "max": 1800,
+      "required": false
+    },
+    "room.fafdc4f42b6c": {
+      "group": "room",
+      "default": "操作不存在。",
+      "max": 1800,
+      "required": false
+    },
+    "room.acff2e7228d6": {
+      "group": "room",
+      "default": "点歌台登录校验未通过（{stage}），请将此提示告知维护者。",
+      "max": 1800,
+      "required": false
+    },
+    "room.c87feea9ea18": {
+      "group": "room",
+      "default": "一位伙伴",
+      "max": 1800,
+      "required": false
+    },
+    "room.5bbcac595bc6": {
+      "group": "room",
+      "default": "顺序播放",
+      "max": 1800,
+      "required": false
+    },
+    "room.2fe0943eacb3": {
+      "group": "room",
+      "default": "列表循环",
+      "max": 1800,
+      "required": false
+    },
+    "room.8cde791504d2": {
+      "group": "room",
+      "default": "单曲循环",
+      "max": 1800,
+      "required": false
+    },
+    "room.f34b7ce61098": {
+      "group": "room",
+      "default": "随机播放",
+      "max": 1800,
+      "required": false
+    },
+    "room.c587e4968f79": {
+      "group": "room",
+      "default": "，跳过 {skipped} 个不可用或超长条目",
+      "max": 1800,
+      "required": false
+    },
+    "room.7c51442da834": {
+      "group": "room",
+      "default": "加入了合集《{title}》，共 {count} 首{value3}",
+      "max": 1800,
+      "required": false
+    },
+    "room.d033d3081ed8": {
+      "group": "room",
+      "default": "加入了《{title}》",
+      "max": 1800,
+      "required": false
+    },
+    "room.eca78e4cac00": {
+      "group": "room",
+      "default": "点播《{title}》，正在准备",
+      "max": 1800,
+      "required": false
+    },
+    "room.26328eacafc6": {
+      "group": "room",
+      "default": "暂停了《{title}》",
+      "max": 1800,
+      "required": false
+    },
+    "room.507680ed8a29": {
+      "group": "room",
+      "default": "继续播放《{title}》",
+      "max": 1800,
+      "required": false
+    },
+    "room.151f10948f10": {
+      "group": "room",
+      "default": "开始准备《{title}》",
+      "max": 1800,
+      "required": false
+    },
+    "room.486e42475adb": {
+      "group": "room",
+      "default": "下一首",
+      "max": 1800,
+      "required": false
+    },
+    "room.8c747908bf69": {
+      "group": "room",
+      "default": "上一首",
+      "max": 1800,
+      "required": false
+    },
+    "room.a0196b8ea854": {
+      "group": "room",
+      "default": "切换到{value1}《{title}》，正在准备",
+      "max": 1800,
+      "required": false
+    },
+    "room.887c6ba16e57": {
+      "group": "room",
+      "default": "已到歌单末尾，播放停止",
+      "max": 1800,
+      "required": false
+    },
+    "room.0428192fb479": {
+      "group": "room",
+      "default": "将《{title}》定位到 {value2}，正在准备",
+      "max": 1800,
+      "required": false
+    },
+    "room.a44b4dc67603": {
+      "group": "room",
+      "default": "将播放方式改为{value1}",
+      "max": 1800,
+      "required": false
+    },
+    "room.08c473329fe2": {
+      "group": "room",
+      "default": "将《{title}》移到歌单第 {value2} 位",
+      "max": 1800,
+      "required": false
+    },
+    "room.a2b9785b983b": {
+      "group": "room",
+      "default": "移除了《{title}》",
+      "max": 1800,
+      "required": false
+    },
+    "room.b3c7c0538a12": {
+      "group": "room",
+      "default": "清空了歌单，共 {count} 首",
+      "max": 1800,
+      "required": false
+    },
+    "room.050d3103f1ec": {
+      "group": "room",
+      "default": "结束了本频道的点歌台",
+      "max": 1800,
+      "required": false
+    },
+    "room.186cae5cd6f9": {
+      "group": "room",
+      "default": "音频准备超过等待时间，请重试",
+      "max": 1800,
+      "required": false
+    },
+    "room.f0f12b34054a": {
+      "group": "room",
+      "default": "音频下载失败，请重试",
+      "max": 1800,
+      "required": false
+    },
+    "room.23786c31a37a": {
+      "group": "room",
+      "default": "缓存转码失败",
+      "max": 1800,
+      "required": false
+    },
+    "room.2351f9be79e6": {
+      "group": "room",
+      "default": "音频工具未能启动",
+      "max": 1800,
+      "required": false
+    },
+    "room.009d6fce816d": {
+      "group": "room",
+      "default": "缓存音频解码失败",
+      "max": 1800,
+      "required": false
+    },
+    "room.927e5a42e200": {
+      "group": "room",
+      "default": "Discord 音频编码失败",
+      "max": 1800,
+      "required": false
+    },
+    "room.4f11d871d38b": {
+      "group": "room",
+      "default": "语音连接已中断，请重新加入语音频道后重试",
+      "max": 1800,
+      "required": false
+    },
+    "room.f3c6bded063a": {
+      "group": "room",
+      "default": "Discord 播放器启动超时，请重试",
+      "max": 1800,
+      "required": false
+    },
+    "room.2e6b61bd2efe": {
+      "group": "room",
+      "default": "点歌台",
+      "max": 1800,
+      "required": false
+    },
+    "room.999d9b5dffda": {
+      "group": "room",
+      "default": "已定位并保持暂停",
+      "max": 1800,
+      "required": false
+    },
+    "room.803a3019e28a": {
+      "group": "room",
+      "default": "已开始播放",
+      "max": 1800,
+      "required": false
+    },
+    "room.b9a623837b9d": {
+      "group": "room",
+      "default": "这一曲没能顺利播放，请重新选择歌曲后重试。",
+      "max": 1800,
+      "required": false
+    },
+    "room.11cd38a52110": {
+      "group": "room",
+      "default": "这一曲没能顺利播放：{value1}（{stage}）。",
+      "max": 1800,
+      "required": false
+    },
+    "room.f883bee2818e": {
+      "group": "room",
+      "default": "《{title}》播放失败，请查看错误提示",
+      "max": 1800,
+      "required": false
+    },
+    "room.06afc99e7dcd": {
+      "group": "room",
+      "default": "网易云",
+      "max": 1800,
+      "required": false
+    },
+    "room.d533c9350e1a": {
+      "group": "room",
+      "default": "{value1} 暂时无法搜索，仍可选择其他已选平台的结果，或稍后重试。",
+      "max": 1800,
+      "required": false
+    },
+    "page.8b0de0c30448": {
+      "group": "page",
+      "default": "Yachiyo · 月夜点歌台",
+      "max": 1800,
+      "required": false
+    },
+    "page.8584d292d0c1": {
+      "group": "page",
+      "default": "月夜点歌台首页",
+      "max": 1800,
+      "required": false
+    },
+    "page.d5f744d489d3": {
+      "group": "page",
+      "default": "YACHIYO",
+      "max": 1800,
+      "required": false
+    },
+    "page.ac6163094822": {
+      "group": "page",
+      "default": "月夜点歌台",
+      "max": 1800,
+      "required": false
+    },
+    "page.296be82399cd": {
+      "group": "page",
+      "default": "点歌台状态",
+      "max": 1800,
+      "required": false
+    },
+    "page.455b3ec832d8": {
+      "group": "page",
+      "default": "正在加载界面",
+      "max": 1800,
+      "required": false
+    },
+    "page.694186911ae3": {
+      "group": "page",
+      "default": "正在连接",
+      "max": 1800,
+      "required": false
+    },
+    "page.65af2d77e7d0": {
+      "group": "page",
+      "default": "结束当前频道的点歌台",
+      "max": 1800,
+      "required": false
+    },
+    "page.c7b24e7997e9": {
+      "group": "page",
+      "default": "结束",
+      "max": 1800,
+      "required": false
+    },
+    "page.4f8525dba5a4": {
+      "group": "page",
+      "default": "交互预览 · 示例歌曲不会播放真实音频",
+      "max": 1800,
+      "required": false
+    },
+    "page.d7a8d3457557": {
+      "group": "page",
+      "default": "音乐播放器",
+      "max": 1800,
+      "required": false
+    },
+    "page.18bd6363803a": {
+      "group": "page",
+      "default": "TONIGHT'S SOUNDTRACK",
+      "max": 1800,
+      "required": false
+    },
+    "page.aa156aa67a6d": {
+      "group": "page",
+      "default": "等待点歌",
+      "max": 1800,
+      "required": false
+    },
+    "page.a68a0e327568": {
+      "group": "page",
+      "default": "YOUR LITTLE MUSIC ROOM",
+      "max": 1800,
+      "required": false
+    },
+    "page.40d19cd46c26": {
+      "group": "page",
+      "default": "今晚，想听哪一首？",
+      "max": 1800,
+      "required": false
+    },
+    "page.c9aa5cfc59b4": {
+      "group": "page",
+      "default": "把喜欢的旋律交给我吧。♪",
+      "max": 1800,
+      "required": false
+    },
+    "page.fc16e2a0fca6": {
+      "group": "page",
+      "default": "播放进度",
+      "max": 1800,
+      "required": false
+    },
+    "page.a59ae8f6953c": {
+      "group": "page",
+      "default": "切换播放方式",
+      "max": 1800,
+      "required": false
+    },
+    "page.5bbcac595bc6": {
+      "group": "page",
+      "default": "顺序播放",
+      "max": 1800,
+      "required": false
+    },
+    "page.8c747908bf69": {
+      "group": "page",
+      "default": "上一首",
+      "max": 1800,
+      "required": false
+    },
+    "page.c3396195e91c": {
+      "group": "page",
+      "default": "播放",
+      "max": 1800,
+      "required": false
+    },
+    "page.486e42475adb": {
+      "group": "page",
+      "default": "下一首",
+      "max": 1800,
+      "required": false
+    },
+    "page.02a61399982d": {
+      "group": "page",
+      "default": "打开歌单",
+      "max": 1800,
+      "required": false
+    },
+    "page.473e57b72072": {
+      "group": "page",
+      "default": "歌单",
+      "max": 1800,
+      "required": false
+    },
+    "page.204bf3bf4cb9": {
+      "group": "page",
+      "default": "想听什么？搜一首。",
+      "max": 1800,
+      "required": false
+    },
+    "page.dac139b92f80": {
+      "group": "page",
+      "default": "歌名，或歌名 + 歌手",
+      "max": 1800,
+      "required": false
+    },
+    "page.073a0d57165c": {
+      "group": "page",
+      "default": "搜索歌曲",
+      "max": 1800,
+      "required": false
+    },
+    "page.cf7e35134b35": {
+      "group": "page",
+      "default": "从 Bilibili、YouTube 和网易云找到喜欢的版本，再加入今夜的歌单",
+      "max": 1800,
+      "required": false
+    },
+    "page.e7b68c47cdac": {
+      "group": "page",
+      "default": "下一首，由你来选。",
+      "max": 1800,
+      "required": false
+    },
+    "page.23b647daf953": {
+      "group": "page",
+      "default": "粘贴 B站、YouTube 或网易云单曲链接",
+      "max": 1800,
+      "required": false
+    },
+    "page.c70ed532d51d": {
+      "group": "page",
+      "default": "加入歌单",
+      "max": 1800,
+      "required": false
+    },
+    "page.f793551c5e1e": {
+      "group": "page",
+      "default": "同频道一起听 · 点歌、暂停和切歌会同步给房间里的伙伴",
+      "max": 1800,
+      "required": false
+    },
+    "page.3ea44d289232": {
+      "group": "page",
+      "default": "点击开始收听",
+      "max": 1800,
+      "required": false
+    },
+    "page.53000f0dd9e5": {
+      "group": "page",
+      "default": "房间动态",
+      "max": 1800,
+      "required": false
+    },
+    "page.765c4aa3c03f": {
+      "group": "page",
+      "default": "同频道共享 · 最近 5 条",
+      "max": 1800,
+      "required": false
+    },
+    "page.51d4e13c08fa": {
+      "group": "page",
+      "default": "还没有操作记录，点一首喜欢的歌吧。",
+      "max": 1800,
+      "required": false
+    },
+    "page.6c584ddb2399": {
+      "group": "page",
+      "default": "愿今夜的旋律，恰好落在你心上。",
+      "max": 1800,
+      "required": false
+    },
+    "page.7ec69a2a5d28": {
+      "group": "page",
+      "default": "OUR PLAYLIST",
+      "max": 1800,
+      "required": false
+    },
+    "page.ae4d2cc206eb": {
+      "group": "page",
+      "default": "今夜的歌单",
+      "max": 1800,
+      "required": false
+    },
+    "page.12af2b91cd2d": {
+      "group": "page",
+      "default": "关闭歌单",
+      "max": 1800,
+      "required": false
+    },
+    "page.bf351b0ba563": {
+      "group": "page",
+      "default": "点击歌曲即可切换，大家的播放器会一起更新。",
+      "max": 1800,
+      "required": false
+    },
+    "page.ad2bbf335fb6": {
+      "group": "page",
+      "default": "舞台还在等第一首歌",
+      "max": 1800,
+      "required": false
+    },
+    "page.2e58d8245302": {
+      "group": "page",
+      "default": "粘贴一个链接，让今晚的歌单开始吧。",
+      "max": 1800,
+      "required": false
+    },
+    "page.c9b9ae7a6144": {
+      "group": "page",
+      "default": "上一页",
+      "max": 1800,
+      "required": false
+    },
+    "page.8a8542f69648": {
+      "group": "page",
+      "default": "下一页",
+      "max": 1800,
+      "required": false
+    },
+    "page.7c9a189b211d": {
+      "group": "page",
+      "default": "歌单仅保留在当前房间会话中",
+      "max": 1800,
+      "required": false
+    },
+    "page.4e0ca928260e": {
+      "group": "page",
+      "default": "清空歌单",
+      "max": 1800,
+      "required": false
+    },
+    "page.ce7a9c8cb54a": {
+      "group": "page",
+      "default": "FIND YOUR MELODY",
+      "max": 1800,
+      "required": false
+    },
+    "page.a2028632c027": {
+      "group": "page",
+      "default": "找一首喜欢的歌",
+      "max": 1800,
+      "required": false
+    },
+    "page.ab008ef18dac": {
+      "group": "page",
+      "default": "关闭搜索",
+      "max": 1800,
+      "required": false
+    },
+    "page.a690328cc053": {
+      "group": "page",
+      "default": "选择搜索平台，可多选",
+      "max": 1800,
+      "required": false
+    },
+    "page.5c55a67935af": {
+      "group": "page",
+      "default": "全部",
+      "max": 1800,
+      "required": false
+    },
+    "page.f78bebf24406": {
+      "group": "page",
+      "default": "Bilibili",
+      "max": 1800,
+      "required": false
+    },
+    "page.fb7accfff8c6": {
+      "group": "page",
+      "default": "YouTube",
+      "max": 1800,
+      "required": false
+    },
+    "page.06afc99e7dcd": {
+      "group": "page",
+      "default": "网易云",
+      "max": 1800,
+      "required": false
+    },
+    "page.1d5f51dcdac1": {
+      "group": "page",
+      "default": "平台可多选 · 单平台 10 首 · 双平台各 5 首 · 全部各 4 首",
+      "max": 1800,
+      "required": false
+    },
+    "page.34424bc8d71e": {
+      "group": "page",
+      "default": "CHOOSE YOUR MELODY",
+      "max": 1800,
+      "required": false
+    },
+    "page.4cf86e0dc04c": {
+      "group": "page",
+      "default": "发现一个合集",
+      "max": 1800,
+      "required": false
+    },
+    "page.527975777e23": {
+      "group": "page",
+      "default": "取消加入合集",
+      "max": 1800,
+      "required": false
+    },
+    "page.4ef2dbac0613": {
+      "group": "page",
+      "default": "只加入这一首",
+      "max": 1800,
+      "required": false
+    },
+    "page.797bf095f056": {
+      "group": "page",
+      "default": "加入整个合集",
+      "max": 1800,
+      "required": false
+    },
+    "page.0cd09836b9c7": {
+      "group": "page",
+      "default": "按你的选择加入今夜的歌单，取消则保留原来的歌单。",
+      "max": 1800,
+      "required": false
+    },
+    "page.081e7602dc44": {
+      "group": "page",
+      "default": "先不加入",
+      "max": 1800,
+      "required": false
+    },
+    "page.99b164abab32": {
+      "group": "page",
+      "default": "结束这场听歌？",
+      "max": 1800,
+      "required": false
+    },
+    "page.d9f9c27abd12": {
+      "group": "page",
+      "default": "再听一会儿",
+      "max": 1800,
+      "required": false
+    },
+    "page.65a1e36a1baf": {
+      "group": "page",
+      "default": "确认结束",
+      "max": 1800,
+      "required": false
+    },
+    "activity.platform_bilibili": {
+      "group": "activity",
+      "default": "BILIBILI",
+      "max": 100
+    },
+    "activity.platform_youtube": {
+      "group": "activity",
+      "default": "YOUTUBE",
+      "max": 100
+    }
+  },
+  "colors": {
+    "ceeedf8": {
+      "default": "#eeedf8",
+      "label": "主要文字",
+      "primary": true
+    },
+    "c101018": {
+      "default": "#101018",
+      "label": "页面背景",
+      "primary": true
+    },
+    "c8e8b9f": {
+      "default": "#8e8b9f",
+      "label": "次要文字",
+      "primary": true
+    },
+    "cc0a0ff": {
+      "default": "#c0a0ff",
+      "label": "主强调色",
+      "primary": true
+    },
+    "cffffff": {
+      "default": "#ffffff",
+      "label": "白色 / 分隔线",
+      "primary": true
+    },
+    "c1b1a27": {
+      "default": "#1b1a27",
+      "label": "面板背景",
+      "primary": true
+    },
+    "ca7d8cd": {
+      "default": "#a7d8cd",
+      "label": "在线 / 成功",
+      "primary": true
+    },
+    "c4a3264": {
+      "default": "#4a3264",
+      "label": "细节 #4a3264",
+      "primary": false
+    },
+    "cb4afc5": {
+      "default": "#b4afc5",
+      "label": "细节 #b4afc5",
+      "primary": false
+    },
+    "ceeeeee": {
+      "default": "#eeeeee",
+      "label": "细节 #eeeeee",
+      "primary": false
+    },
+    "ccfb8f8": {
+      "default": "#cfb8f8",
+      "label": "细节 #cfb8f8",
+      "primary": false
+    },
+    "c252132": {
+      "default": "#252132",
+      "label": "细节 #252132",
+      "primary": false
+    },
+    "c191923": {
+      "default": "#191923",
+      "label": "细节 #191923",
+      "primary": false
+    },
+    "c000000": {
+      "default": "#000000",
+      "label": "阴影",
+      "primary": true
+    },
+    "c9991ab": {
+      "default": "#9991ab",
+      "label": "细节 #9991ab",
+      "primary": false
+    },
+    "c272331": {
+      "default": "#272331",
+      "label": "细节 #272331",
+      "primary": false
+    },
+    "c1d1b27": {
+      "default": "#1d1b27",
+      "label": "细节 #1d1b27",
+      "primary": false
+    },
+    "cd7c2ff": {
+      "default": "#d7c2ff",
+      "label": "细节 #d7c2ff",
+      "primary": false
+    },
+    "cccafe5": {
+      "default": "#ccafe5",
+      "label": "细节 #ccafe5",
+      "primary": false
+    },
+    "c82689e": {
+      "default": "#82689e",
+      "label": "细节 #82689e",
+      "primary": false
+    },
+    "c35263f": {
+      "default": "#35263f",
+      "label": "细节 #35263f",
+      "primary": false
+    },
+    "c111111": {
+      "default": "#111111",
+      "label": "细节 #111111",
+      "primary": false
+    },
+    "cc6aad3": {
+      "default": "#c6aad3",
+      "label": "细节 #c6aad3",
+      "primary": false
+    },
+    "c7e7392": {
+      "default": "#7e7392",
+      "label": "细节 #7e7392",
+      "primary": false
+    },
+    "cd1b7ff": {
+      "default": "#d1b7ff",
+      "label": "细节 #d1b7ff",
+      "primary": false
+    },
+    "c837e94": {
+      "default": "#837e94",
+      "label": "细节 #837e94",
+      "primary": false
+    },
+    "cc5bed8": {
+      "default": "#c5bed8",
+      "label": "细节 #c5bed8",
+      "primary": false
+    },
+    "ca29aaf": {
+      "default": "#a29aaf",
+      "label": "细节 #a29aaf",
+      "primary": false
+    },
+    "cc3a3ed": {
+      "default": "#c3a3ed",
+      "label": "细节 #c3a3ed",
+      "primary": false
+    },
+    "c31223f": {
+      "default": "#31223f",
+      "label": "细节 #31223f",
+      "primary": false
+    },
+    "cb28cdd": {
+      "default": "#b28cdd",
+      "label": "细节 #b28cdd",
+      "primary": false
+    },
+    "cd3b7f6": {
+      "default": "#d3b7f6",
+      "label": "细节 #d3b7f6",
+      "primary": false
+    },
+    "c191821": {
+      "default": "#191821",
+      "label": "细节 #191821",
+      "primary": false
+    },
+    "cd2cbdc": {
+      "default": "#d2cbdc",
+      "label": "细节 #d2cbdc",
+      "primary": false
+    },
+    "c111018": {
+      "default": "#111018",
+      "label": "细节 #111018",
+      "primary": false
+    },
+    "c676072": {
+      "default": "#676072",
+      "label": "细节 #676072",
+      "primary": false
+    },
+    "cb996e4": {
+      "default": "#b996e4",
+      "label": "细节 #b996e4",
+      "primary": false
+    },
+    "cd2b5f2": {
+      "default": "#d2b5f2",
+      "label": "细节 #d2b5f2",
+      "primary": false
+    },
+    "c71697d": {
+      "default": "#71697d",
+      "label": "细节 #71697d",
+      "primary": false
+    },
+    "c777080": {
+      "default": "#777080",
+      "label": "细节 #777080",
+      "primary": false
+    },
+    "ce7c39b": {
+      "default": "#e7c39b",
+      "label": "细节 #e7c39b",
+      "primary": false
+    },
+    "c62596e": {
+      "default": "#62596e",
+      "label": "细节 #62596e",
+      "primary": false
+    },
+    "c1a1823": {
+      "default": "#1a1823",
+      "label": "细节 #1a1823",
+      "primary": false
+    },
+    "c09080f": {
+      "default": "#09080f",
+      "label": "细节 #09080f",
+      "primary": false
+    },
+    "caaaaaa": {
+      "default": "#aaaaaa",
+      "label": "细节 #aaaaaa",
+      "primary": false
+    },
+    "c8f869c": {
+      "default": "#8f869c",
+      "label": "细节 #8f869c",
+      "primary": false
+    },
+    "cb58fde": {
+      "default": "#b58fde",
+      "label": "细节 #b58fde",
+      "primary": false
+    },
+    "c80758d": {
+      "default": "#80758d",
+      "label": "细节 #80758d",
+      "primary": false
+    },
+    "c8a8095": {
+      "default": "#8a8095",
+      "label": "细节 #8a8095",
+      "primary": false
+    },
+    "c82788d": {
+      "default": "#82788d",
+      "label": "细节 #82788d",
+      "primary": false
+    },
+    "c84798e": {
+      "default": "#84798e",
+      "label": "细节 #84798e",
+      "primary": false
+    },
+    "c8c8099": {
+      "default": "#8c8099",
+      "label": "细节 #8c8099",
+      "primary": false
+    },
+    "cab88cc": {
+      "default": "#ab88cc",
+      "label": "细节 #ab88cc",
+      "primary": false
+    },
+    "cc0b3cd": {
+      "default": "#c0b3cd",
+      "label": "细节 #c0b3cd",
+      "primary": false
+    },
+    "c211d2c": {
+      "default": "#211d2c",
+      "label": "细节 #211d2c",
+      "primary": false
+    },
+    "ce5dced": {
+      "default": "#e5dced",
+      "label": "细节 #e5dced",
+      "primary": false
+    },
+    "ca79ab4": {
+      "default": "#a79ab4",
+      "label": "细节 #a79ab4",
+      "primary": false
+    },
+    "cce8d96": {
+      "default": "#ce8d96",
+      "label": "细节 #ce8d96",
+      "primary": false
+    },
+    "ce9a7af": {
+      "default": "#e9a7af",
+      "label": "细节 #e9a7af",
+      "primary": false
+    },
+    "cddc9ff": {
+      "default": "#ddc9ff",
+      "label": "细节 #ddc9ff",
+      "primary": false
+    },
+    "c82788e": {
+      "default": "#82788e",
+      "label": "细节 #82788e",
+      "primary": false
+    },
+    "ca99fb6": {
+      "default": "#a99fb6",
+      "label": "细节 #a99fb6",
+      "primary": false
+    },
+    "cd3bddf": {
+      "default": "#d3bddf",
+      "label": "细节 #d3bddf",
+      "primary": false
+    },
+    "c776d84": {
+      "default": "#776d84",
+      "label": "细节 #776d84",
+      "primary": false
+    },
+    "cb99bd9": {
+      "default": "#b99bd9",
+      "label": "细节 #b99bd9",
+      "primary": false
+    },
+    "c292332": {
+      "default": "#292332",
+      "label": "细节 #292332",
+      "primary": false
+    },
+    "ce3d9ed": {
+      "default": "#e3d9ed",
+      "label": "细节 #e3d9ed",
+      "primary": false
+    },
+    "ce3caff": {
+      "default": "#e3caff",
+      "label": "细节 #e3caff",
+      "primary": false
+    },
+    "cd5a36c": {
+      "default": "#d5a36c",
+      "label": "提醒",
+      "primary": true
+    },
+    "cf0bf8e": {
+      "default": "#f0bf8e",
+      "label": "细节 #f0bf8e",
+      "primary": false
+    },
+    "ce2b98e": {
+      "default": "#e2b98e",
+      "label": "细节 #e2b98e",
+      "primary": false
+    },
+    "c282032": {
+      "default": "#282032",
+      "label": "细节 #282032",
+      "primary": false
+    },
+    "c1b1825": {
+      "default": "#1b1825",
+      "label": "细节 #1b1825",
+      "primary": false
+    },
+    "c978ca7": {
+      "default": "#978ca7",
+      "label": "细节 #978ca7",
+      "primary": false
+    },
+    "ce0c4ff": {
+      "default": "#e0c4ff",
+      "label": "细节 #e0c4ff",
+      "primary": false
+    },
+    "cbd96ec": {
+      "default": "#bd96ec",
+      "label": "细节 #bd96ec",
+      "primary": false
+    },
+    "cb9aec9": {
+      "default": "#b9aec9",
+      "label": "细节 #b9aec9",
+      "primary": false
+    },
+    "c493459": {
+      "default": "#493459",
+      "label": "细节 #493459",
+      "primary": false
+    },
+    "c292235": {
+      "default": "#292235",
+      "label": "细节 #292235",
+      "primary": false
+    },
+    "c100d19": {
+      "default": "#100d19",
+      "label": "细节 #100d19",
+      "primary": false
+    },
+    "ce2d8ed": {
+      "default": "#e2d8ed",
+      "label": "细节 #e2d8ed",
+      "primary": false
+    },
+    "c92859f": {
+      "default": "#92859f",
+      "label": "细节 #92859f",
+      "primary": false
+    },
+    "cd8baf4": {
+      "default": "#d8baf4",
+      "label": "细节 #d8baf4",
+      "primary": false
+    },
+    "c93839f": {
+      "default": "#93839f",
+      "label": "细节 #93839f",
+      "primary": false
+    },
+    "cc7bdd6": {
+      "default": "#c7bdd6",
+      "label": "细节 #c7bdd6",
+      "primary": false
+    },
+    "c8c809b": {
+      "default": "#8c809b",
+      "label": "细节 #8c809b",
+      "primary": false
+    },
+    "c887b96": {
+      "default": "#887b96",
+      "label": "细节 #887b96",
+      "primary": false
+    },
+    "c121019": {
+      "default": "#121019",
+      "label": "细节 #121019",
+      "primary": false
+    },
+    "c100f18": {
+      "default": "#100f18",
+      "label": "细节 #100f18",
+      "primary": false
+    },
+    "c17131f": {
+      "default": "#17131f",
+      "label": "细节 #17131f",
+      "primary": false
+    },
+    "cdfd0ed": {
+      "default": "#dfd0ed",
+      "label": "细节 #dfd0ed",
+      "primary": false
+    },
+    "cd9cee5": {
+      "default": "#d9cee5",
+      "label": "细节 #d9cee5",
+      "primary": false
+    },
+    "ca79bb7": {
+      "default": "#a79bb7",
+      "label": "细节 #a79bb7",
+      "primary": false
+    },
+    "c8f809d": {
+      "default": "#8f809d",
+      "label": "细节 #8f809d",
+      "primary": false
+    }
+  }
+}

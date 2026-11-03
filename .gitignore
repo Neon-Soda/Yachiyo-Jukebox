@@ -1,0 +1,33 @@
+node_modules/
+bot/node_modules/
+bot/activity/node_modules/
+bot/activity/dist/
+stage/
+release/
+releases/
+.local/
+user-data/
+dist/
+src-tauri/gen/
+src-tauri/target/
+.env
+.env.*
+!.env.example
+*.log
+cookies/
+private-runtime/
+credentials.bin
+credentials.dpapi
+known_hosts
+id_ed25519
+id_ed25519.pub
+id_rsa
+id_rsa.pub
+/bot/data/
+
+# Downloaded runtime binaries are provisioned locally, not committed to Git.
+/tools/win32-x64/*.exe
+
+# Local handover notes contain deployment/account context, not product docs.
+/接续说明.txt
+/docs/维护记录-*.md

@@ -1,0 +1,33 @@
+{
+  "name": "yachiyo-desktop",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 1420 --strictPort",
+    "build:ui": "vue-tsc --noEmit && vite build",
+    "start": "powershell -NoProfile -ExecutionPolicy Bypass -File windows/tauri-build.ps1 -Mode dev",
+    "setup": "npm --prefix bot ci --omit=dev && npm --prefix bot/activity ci",
+    "test": "node --test \"test/*.test.mjs\" \"bot/test/*.test.mjs\"",
+    "test:rust": "powershell -NoProfile -ExecutionPolicy Bypass -File windows/tauri-build.ps1 -Mode test",
+    "test:ui": "node scripts/tauri-smoke.mjs",
+    "activity:build": "npm --prefix bot/activity run build",
+    "stage": "npm run activity:build && node scripts/stage.mjs",
+    "dist": "powershell -NoProfile -ExecutionPolicy Bypass -File windows/tauri-build.ps1 -Mode release",
+    "tauri": "tauri"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2",
+    "vue": "^3"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "@vitejs/plugin-vue": "^6",
+    "acorn": "^8.15.0",
+    "parse5": "^8.0.0",
+    "prettier": "^3.9.10",
+    "typescript": "^5.9",
+    "vite": "^7",
+    "vue-tsc": "^3"
+  }
+}

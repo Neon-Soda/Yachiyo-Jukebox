@@ -1,0 +1,12 @@
+{
+  "name": "yachiyo-activity",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "@discord/embedded-app-sdk": "^2.5.0",
+    "esbuild": "^0.28.2"
+  }
+}

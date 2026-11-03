@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title data-copy="page.8b0de0c30448">Yachiyo · 月夜点歌台</title>
+  <link rel="stylesheet" href="./style.css?v=operation-notices-1">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <a class="brand" href="#" aria-label="月夜点歌台首页" data-copy-attrs='{"aria-label":"page.8584d292d0c1"}'><span class="brand-mark">☾</span><span><span data-copy="page.d5f744d489d3">YACHIYO</span><small><span data-copy="page.ac6163094822">月夜点歌台</span></small></span></a>
+      <div class="room-label" role="group" aria-label="点歌台状态" data-copy-attrs='{"aria-label":"page.296be82399cd"}'><span class="status-dot" aria-hidden="true"></span><div class="room-status"><span id="room-name"><span data-copy="page.455b3ec832d8">正在加载界面</span></span><span id="member-count"><span data-copy="page.694186911ae3">正在连接</span></span></div></div>
+      <button id="end-room" class="quiet-button" title="结束当前频道的点歌台" data-copy-attrs='{"title":"page.65af2d77e7d0"}'><span data-copy="page.c7b24e7997e9">结束</span></button>
+    </header>
+    <main>
+      <div id="preview-banner" class="preview-banner" hidden><span data-copy="page.4f8525dba5a4">交互预览 · 示例歌曲不会播放真实音频</span></div>
+      <section class="player-card" aria-label="音乐播放器" data-copy-attrs='{"aria-label":"page.d7a8d3457557"}'>
+        <div class="player-topline"><span class="eyebrow"><span data-copy="page.18bd6363803a">TONIGHT'S SOUNDTRACK</span></span><span id="playback-status" class="status-pill"><span data-copy="page.aa156aa67a6d">等待点歌</span></span></div>
+        <div class="record-stage" id="artwork-stage" aria-hidden="true"><img id="track-cover" alt="" hidden><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="record" id="record"><div class="record-label"><span>☾</span><small><span data-copy="page.d5f744d489d3">YACHIYO</span></small></div></div><span class="spark spark-one">✦</span><span class="spark spark-two">✧</span></div>
+        <div class="track-info"><span id="platform" class="platform-label"><span data-copy="page.a68a0e327568">YOUR LITTLE MUSIC ROOM</span></span><h1 id="track-title"><span data-copy="page.40d19cd46c26">今晚，想听哪一首？</span></h1><p id="track-subtitle"><span data-copy="page.c9aa5cfc59b4">把喜欢的旋律交给我吧。♪</span></p></div>
+        <div class="seek-area"><label class="sr-only" for="progress"><span data-copy="page.fc16e2a0fca6">播放进度</span></label><input id="progress" type="range" min="0" max="100" step="0.1" value="0" disabled><div class="time-row"><span id="elapsed">0:00</span><span id="duration">0:00</span></div></div>
+        <div class="controls">
+          <button id="mode" class="icon-button side-control" aria-label="切换播放方式" title="顺序播放" data-copy-attrs='{"aria-label":"page.a59ae8f6953c","title":"page.5bbcac595bc6"}'><span id="mode-icon">⇢</span><small id="mode-label"><span data-copy="page.5bbcac595bc6">顺序播放</span></small></button>
+          <button id="previous" class="icon-button track-control" aria-label="上一首" title="上一首" data-copy-attrs='{"aria-label":"page.8c747908bf69","title":"page.8c747908bf69"}'><svg viewBox="0 0 24 24"><path d="M6 5v14M19 5 8 12l11 7Z"/></svg></button>
+          <button id="play-pause" class="play-button" aria-label="播放" title="播放" data-copy-attrs='{"aria-label":"page.c3396195e91c","title":"page.c3396195e91c"}'><svg id="play-icon" viewBox="0 0 24 24"><path d="m9 5 11 7-11 7Z"/></svg><svg id="pause-icon" viewBox="0 0 24 24" hidden><path d="M8 5v14M16 5v14"/></svg></button>
+          <button id="next" class="icon-button track-control" aria-label="下一首" title="下一首" data-copy-attrs='{"aria-label":"page.486e42475adb","title":"page.486e42475adb"}'><svg viewBox="0 0 24 24"><path d="M18 5v14M5 5l11 7-11 7Z"/></svg></button>
+          <button id="open-playlist" class="icon-button side-control" aria-label="打开歌单" data-copy-attrs='{"aria-label":"page.02a61399982d"}'><span>☷</span><small><span data-copy="page.473e57b72072">歌单</span> <b id="track-count">0</b></small></button>
+        </div>
+      </section>
+      <form id="search-form" class="add-card search-card"><label for="search-query"><span data-copy="page.204bf3bf4cb9">想听什么？搜一首。</span></label><div class="input-row"><input id="search-query" type="search" placeholder="歌名，或歌名 + 歌手" maxlength="100" required autocomplete="off" data-copy-attrs='{"placeholder":"page.dac139b92f80"}'><button id="search-button" type="submit"><span data-copy="page.073a0d57165c">搜索歌曲</span> <span>⌕</span></button></div><p><span data-copy="page.cf7e35134b35">从 Bilibili、YouTube 和网易云找到喜欢的版本，再加入今夜的歌单</span></p></form>
+      <form id="add-form" class="add-card"><label for="song-link"><span data-copy="page.e7b68c47cdac">下一首，由你来选。</span></label><div class="input-row"><input id="song-link" type="url" placeholder="粘贴 B站、YouTube 或网易云单曲链接" required autocomplete="off" data-copy-attrs='{"placeholder":"page.23b647daf953"}'><button id="add-button" type="submit"><span data-copy="page.c70ed532d51d">加入歌单</span> <span>＋</span></button></div><p><span data-copy="page.f793551c5e1e">同频道一起听 · 点歌、暂停和切歌会同步给房间里的伙伴</span></p></form>
+      <button id="enable-audio" class="audio-unlock" hidden><span data-copy="page.3ea44d289232">点击开始收听</span></button>
+      <section class="operation-feed" aria-labelledby="operation-title">
+        <div class="operation-heading"><h2 id="operation-title"><span data-copy="page.53000f0dd9e5">房间动态</span></h2><span><span data-copy="page.765c4aa3c03f">同频道共享 · 最近 5 条</span></span></div>
+        <ol id="operation-history" class="operation-history"></ol>
+        <p id="operation-empty" class="operation-empty"><span data-copy="page.51d4e13c08fa">还没有操作记录，点一首喜欢的歌吧。</span></p>
+      </section>
+      <p id="notice" class="notice" role="status" aria-live="polite"></p>
+    </main>
+    <footer><span data-copy="page.6c584ddb2399">愿今夜的旋律，恰好落在你心上。</span><span>☾</span></footer>
+  </div>
+  <div id="toast-region" class="toast-region" role="status" aria-live="polite" aria-relevant="additions"></div>
+  <dialog id="playlist-dialog" class="playlist-dialog" aria-labelledby="playlist-title">
+    <div class="sheet-header"><div><span class="eyebrow"><span data-copy="page.7ec69a2a5d28">OUR PLAYLIST</span></span><h2 id="playlist-title"><span data-copy="page.ae4d2cc206eb">今夜的歌单</span> <span id="sheet-count">0</span></h2></div><button id="close-playlist" class="icon-button close-button" aria-label="关闭歌单" data-copy-attrs='{"aria-label":"page.12af2b91cd2d"}'>×</button></div>
+    <p class="sheet-hint"><span data-copy="page.bf351b0ba563">点击歌曲即可切换，大家的播放器会一起更新。</span></p>
+    <div id="playlist" class="playlist"></div>
+    <div id="playlist-empty" class="empty-state"><span>♫</span><h3><span data-copy="page.ad2bbf335fb6">舞台还在等第一首歌</span></h3><p><span data-copy="page.2e58d8245302">粘贴一个链接，让今晚的歌单开始吧。</span></p></div>
+    <div id="playlist-pagination" class="playlist-pagination" hidden><button id="playlist-prev-page" type="button" class="quiet-button"><span data-copy="page.c9b9ae7a6144">上一页</span></button><span id="playlist-page-label"></span><button id="playlist-next-page" type="button" class="quiet-button"><span data-copy="page.8a8542f69648">下一页</span></button></div>
+    <div class="sheet-footer"><span><span data-copy="page.7c9a189b211d">歌单仅保留在当前房间会话中</span></span><button id="clear-playlist" class="quiet-button"><span data-copy="page.4e0ca928260e">清空歌单</span></button></div>
+    <div class="toast-region" role="status" aria-live="polite" aria-relevant="additions"></div>
+  </dialog>
+  <dialog id="search-dialog" class="search-dialog" aria-labelledby="search-title">
+    <div class="sheet-header"><div><span class="eyebrow"><span data-copy="page.ce7a9c8cb54a">FIND YOUR MELODY</span></span><h2 id="search-title"><span data-copy="page.a2028632c027">找一首喜欢的歌</span></h2></div><button id="close-search" class="icon-button close-button" aria-label="关闭搜索" data-copy-attrs='{"aria-label":"page.ab008ef18dac"}'>×</button></div>
+    <p id="search-summary" class="sheet-hint"></p>
+    <div id="search-filters" class="search-filters" role="group" aria-label="选择搜索平台，可多选" data-copy-attrs='{"aria-label":"page.a690328cc053"}'><button type="button" data-platform="all" aria-pressed="true"><span data-copy="page.5c55a67935af">全部</span></button><button type="button" data-platform="BILIBILI" aria-pressed="false"><span data-copy="page.f78bebf24406">Bilibili</span></button><button type="button" data-platform="YOUTUBE" aria-pressed="false"><span data-copy="page.fb7accfff8c6">YouTube</span></button><button type="button" data-platform="NETEASE" aria-pressed="false"><span data-copy="page.06afc99e7dcd">网易云</span></button></div>
+    <p class="search-selection-hint"><span data-copy="page.1d5f51dcdac1">平台可多选 · 单平台 10 首 · 双平台各 5 首 · 全部各 4 首</span></p>
+    <p id="search-status" class="search-status" role="status" aria-live="polite"></p>
+    <div id="search-results" class="search-results" aria-busy="false"></div>
+    <div class="toast-region" role="status" aria-live="polite" aria-relevant="additions"></div>
+  </dialog>
+  <dialog id="collection-dialog" class="collection-dialog" aria-labelledby="collection-title" aria-describedby="collection-summary">
+    <div class="sheet-header"><div><span class="eyebrow"><span data-copy="page.34424bc8d71e">CHOOSE YOUR MELODY</span></span><h2 id="collection-title"><span data-copy="page.4cf86e0dc04c">发现一个合集</span></h2></div><button id="close-collection" type="button" class="icon-button close-button" aria-label="取消加入合集" data-copy-attrs='{"aria-label":"page.527975777e23"}'>×</button></div>
+    <p id="collection-name" class="collection-name"></p>
+    <p id="collection-summary" class="sheet-hint"></p>
+    <div class="collection-choices">
+      <button id="collection-single" type="button" class="collection-choice"><span id="collection-single-label"><span data-copy="page.4ef2dbac0613">只加入这一首</span></span><small id="collection-single-title"></small></button>
+      <button id="collection-all" type="button" class="collection-choice collection-choice-all"><span><span data-copy="page.797bf095f056">加入整个合集</span></span><small id="collection-all-summary"></small></button>
+    </div>
+    <p class="collection-note"><span data-copy="page.0cd09836b9c7">按你的选择加入今夜的歌单，取消则保留原来的歌单。</span></p>
+    <button id="collection-cancel" type="button" class="quiet-button collection-cancel"><span data-copy="page.081e7602dc44">先不加入</span></button>
+    <div class="toast-region" role="status" aria-live="polite" aria-relevant="additions"></div>
+  </dialog>
+  <dialog id="confirm-dialog" class="confirm-dialog"><h2 id="confirm-title"><span data-copy="page.99b164abab32">结束这场听歌？</span></h2><p id="confirm-text"></p><div><button id="confirm-cancel" class="quiet-button"><span data-copy="page.d9f9c27abd12">再听一会儿</span></button><button id="confirm-yes" class="danger-button"><span data-copy="page.65a1e36a1baf">确认结束</span></button></div><div class="toast-region" role="status" aria-live="polite" aria-relevant="additions"></div></dialog>
+  <script type="module" src="./app.js?v=operation-notices-1"></script>
+</body>
+</html>

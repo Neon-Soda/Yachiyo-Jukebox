@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "main",
+  "description": "Only the local control window can manage Yachiyo; the preview iframe has no native permissions.",
+  "windows": ["main"],
+  "permissions": ["core:default", "allow-rpc", "allow-close-control-window"]
+}
