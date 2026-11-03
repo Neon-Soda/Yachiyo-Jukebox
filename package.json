@@ -1,6 +1,6 @@
 {
   "name": "yachiyo-desktop",
-  "version": "2.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -29,5 +29,15 @@
     "typescript": "^5.9",
     "vite": "^7",
     "vue-tsc": "^3"
+  },
+  "license": "MIT",
+  "author": "Neon-Soda",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Neon-Soda/Yachiyo-Jukebox.git"
+  },
+  "homepage": "https://github.com/Neon-Soda/Yachiyo-Jukebox",
+  "bugs": {
+    "url": "https://github.com/Neon-Soda/Yachiyo-Jukebox/issues"
   }
 }

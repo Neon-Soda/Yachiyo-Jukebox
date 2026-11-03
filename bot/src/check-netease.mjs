@@ -1,3 +1,4 @@
+import { mediaTool } from './media-tools.mjs';
 import { spawn } from 'node:child_process';
 import { mkdtemp, rm, readdir, mkdir, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
@@ -17,7 +18,7 @@ let scratch;
 
 async function run(executable, args, timeout = 120000) {
   return new Promise((resolve, reject) => {
-    const child = spawn(executable, args, { windowsHide: true });
+    const child = spawn(mediaTool(executable), args, { windowsHide: true });
     let out = '', err = '', timedOut = false;
     const timer = setTimeout(() => {
       timedOut = true;

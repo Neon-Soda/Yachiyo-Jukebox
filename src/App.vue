@@ -19,6 +19,9 @@ import AppearanceView from "./views/AppearanceView.vue";
 import ThemeView from "./views/ThemeView.vue";
 import CopyView from "./views/CopyView.vue";
 import StorageView from "./views/StorageView.vue";
+import ToolsView from "./views/ToolsView.vue";
+import ToolsPrompt from "./views/ToolsPrompt.vue";
+import InfoView from "./views/InfoView.vue";
 
 void initialize();
 </script>
@@ -89,12 +92,32 @@ void initialize();
       </button>
       <div class="nav-section">MAINTENANCE</div>
       <button
+        data-page="tools"
+        @click="go('tools')"
+        class="nav"
+        :class="{ active: state.page === 'tools' }"
+      >
+        <span>◇</span>{{ t("工具库")
+        }}<i
+          v-if="state.ready && !state.tools.ready"
+          class="dot warning tool-nav-dot"
+        ></i>
+      </button>
+      <button
         data-page="storage"
         @click="go('storage')"
         class="nav"
         :class="{ active: state.page === 'storage' }"
       >
         <span>▤</span>{{ t("缓存与诊断") }}
+      </button>
+      <button
+        data-page="info"
+        @click="go('info')"
+        class="nav"
+        :class="{ active: state.page === 'info' }"
+      >
+        <span>ⓘ</span>{{ t("关于") }}
       </button>
     </nav>
     <div class="sidebar-bottom">
@@ -157,6 +180,8 @@ void initialize();
       <CopyView v-show="state.page === 'copy'"></CopyView>
 
       <StorageView v-show="state.page === 'storage'"></StorageView>
+      <ToolsView v-show="state.page === 'tools'"></ToolsView>
+      <InfoView v-show="state.page === 'info'"></InfoView>
     </main>
     <footer class="workspace-footer">
       <span>YACHIYO DESKTOP</span
@@ -177,4 +202,5 @@ void initialize();
   <div v-if="state.fatal" class="fatal-banner" role="alert">
     {{ state.fatal }}
   </div>
+  <ToolsPrompt />
 </template>

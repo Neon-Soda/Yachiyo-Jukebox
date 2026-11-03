@@ -1,3 +1,4 @@
+import { mediaTool } from './media-tools.mjs';
 import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readdir, stat, unlink, rename, utimes } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
@@ -96,8 +97,8 @@ export class AudioCache {
   }
   download(prepared, path, timeoutMs = 180000) {
     return new Promise((resolve, reject) => {
-      const download = spawn('yt-dlp', ['--max-filesize', '150M', ...prepared.args], { windowsHide: true });
-      const ffmpeg = spawn('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-i', 'pipe:0', '-vn', '-t', '7200', '-ac', '2', '-ar', '48000', '-c:a', 'libmp3lame', '-b:a', '128k', '-fs', String(this.maxFileBytes), '-f', 'mp3', '-y', path], { windowsHide: true });
+      const download = spawn(mediaTool('yt-dlp'), ['--max-filesize', '150M', ...prepared.args], { windowsHide: true });
+      const ffmpeg = spawn(mediaTool('ffmpeg'), ['-hide_banner', '-loglevel', 'error', '-i', 'pipe:0', '-vn', '-t', '7200', '-ac', '2', '-ar', '48000', '-c:a', 'libmp3lame', '-b:a', '128k', '-fs', String(this.maxFileBytes), '-f', 'mp3', '-y', path], { windowsHide: true });
       let closed = 0, failureStage;
       const kill = stage => { failureStage ??= stage; download.kill(); ffmpeg.kill(); };
       const timer = setTimeout(() => kill('cache-timeout'), timeoutMs);
@@ -123,7 +124,7 @@ export class AudioCache {
 
 function probeDuration(file) {
   return new Promise((resolve, reject) => {
-    const child = spawn('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'json', file], { windowsHide: true });
+    const child = spawn(mediaTool('ffprobe'), ['-v', 'error', '-show_entries', 'format=duration', '-of', 'json', file], { windowsHide: true });
     let out = '';
     const timer = setTimeout(() => child.kill(), 15000);
     child.stdout.on('data', b => { out = (out + b).slice(-64000); }); child.stderr.resume();

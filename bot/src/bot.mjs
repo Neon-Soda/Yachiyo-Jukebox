@@ -1,3 +1,4 @@
+import { mediaTool } from './media-tools.mjs';
 import { attachDesktopStatus } from './desktop-status.mjs';
 import { spawn } from 'node:child_process';
 import { Client, GatewayIntentBits, SlashCommandBuilder, PermissionFlagsBits, MessageFlags } from 'discord.js';
@@ -39,8 +40,8 @@ function next() {
   });
 }
 function startPlayback(track, prepared) {
-  const download = spawn('yt-dlp', prepared.args, { windowsHide: true });
-  const ffmpeg = spawn('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-i', 'pipe:0', '-vn', '-t', '7200', '-ac', '2', '-ar', '48000', '-f', 's16le', 'pipe:1'], { windowsHide: true });
+  const download = spawn(mediaTool('yt-dlp'), prepared.args, { windowsHide: true });
+  const ffmpeg = spawn(mediaTool('ffmpeg'), ['-hide_banner', '-loglevel', 'error', '-i', 'pipe:0', '-vn', '-t', '7200', '-ac', '2', '-ar', '48000', '-f', 's16le', 'pipe:1'], { windowsHide: true });
   processes = [download, ffmpeg];
   let reported = false;
   const fail = () => {

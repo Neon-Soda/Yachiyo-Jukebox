@@ -1,5 +1,13 @@
 # 配置指南
 
+**简体中文** · [English](CONFIGURATION.en.md) · [文档目录](README.md)
+
+## 播放工具
+
+首次打开应用会提示补全工具。进入「工具库」，打开 FFmpeg 下载页，下载 Windows x64 正式版 release essentials ZIP 并解压；选择 `bin/ffmpeg.exe` 后会自动配对同目录的 `ffprobe.exe`。再从 yt-dlp 发布页下载并选择 `yt-dlp.exe`。已有工具可以直接选择。
+
+应用会检查文件格式、版本、音频编解码、时长读取和进度定位。只有成功才保存新关联，失败保留原配置。工具留在所选位置，移动或更新后须重新检查；运行中的 Bot 在重启后使用新配置。取消关联不会删除工具文件。缺少工具时仍可设置账户和主题，但不能启动 Bot。详细版本要求见 [工具说明](../tools/README.md)。
+
 ## Discord 应用
 
 在 [Discord Developer Portal](https://discord.com/developers/applications) 中创建或选择自己的应用与 Bot。在 Yachiyo 的「连接与账户」中填写：
@@ -20,7 +28,7 @@ Activity 需要能被 Discord 访问的 HTTPS 服务。公网 IP、域名或 SSH
 1. 在 Developer Portal 启用 Activities。
 2. 在应用中填写自己的公网 HTTPS 根地址，例如 `https://music.example.com`。
 3. 按应用页面显示的值填写 URL Mapping：Prefix 为 `/`，Target 为该 HTTPS 地址的主机名。
-4. 按应用页面提供的 OAuth2 Redirect URI 完成后台配置。
+4. 按应用页面提供的 OAuth2 Redirect URI 完成后台配置；当前占位地址为 `https://127.0.0.1`，实际授权回跳由 Discord Activity SDK 处理。
 5. 保存并启动 Bot，检查 Discord、本地网页及公网 HTTPS 的状态。
 
 Activity 的测试访问和分发权限也需要在 Discord 后台配置。流程说明见 [Discord 官方 Activity 指南](https://docs.discord.com/developers/activities/building-an-activity)。
@@ -39,7 +47,7 @@ SSH 模式中填写主机、用户名、SSH 端口和远端回环端口，并粘
 
 ## 平台登录与缓存
 
-在相应设置中导入需要的平台登录文件。Cookie 通过应用的凭据存储保存，浏览器网页登录不会自动同步。导入登录状态也不能替代内容所需的账号或地区权限。
+在相应设置中导入需要的平台 Netscape 格式 Cookie 文件。Cookie 通过应用的凭据存储保存，浏览器网页登录不会自动同步。导入登录状态也不能替代内容所需的账号或地区权限。
 
 音频在播放时按需准备和缓存，不预先下载整个歌单。默认缓存上限为 1024 MiB，可在「播放与启动」调整；淘汰遵循最近使用情况，正在使用的缓存受保护。停止 Bot 后可在「缓存与诊断」清理缓存。
 
@@ -49,12 +57,19 @@ SSH 模式中填写主机、用户名、SSH 端口和远端回环端口，并粘
 
 主题可以保存到本地主题库，也可以导入、导出和应用。编辑文案时保留 `{title}` 等占位符。应用主题后重新打开 Activity；Bot 在启动时读取的固定回复和指令描述需要重启后生效。
 
+## 关于 / Info
+
+「关于」显示当前应用版本，并提供 GitHub 源码、发行版本、问题反馈与使用文档入口。MIT 许可全文和第三方组件说明内置于应用，无需联网即可查看；网页入口会在系统浏览器打开。信息页跟随桌面语言和配色设置。
+
 ## 个人资料
 
 - 安装版：安装目录下的 `user-data/`。
 - 开发版：仓库根目录下的 `user-data/`。
 - `preferences.json` 保存桌面语言和外观，`settings.json` 保存普通配置。
+- `media-tools.json` 保存所选工具的路径、版本、文件摘要和检查记录，不应随源码分发。
 - `credentials.dpapi` 保存当前 Windows 账户加密的凭据；更换电脑或 Windows 账户后需重新填写。
 - `private-runtime/` 是运行期间需要的受限文件副本，正常停止时删除。
 
 升级和卸载会保留 `user-data/`。备份个人资料时保留整个目录；分享主题时使用主题导出功能。
+
+更多说明：[下载与工具](DOWNLOADS.md) · [常见问题](FAQ.md) · [隐私政策](PRIVACY.md)。

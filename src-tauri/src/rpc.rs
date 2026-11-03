@@ -5,6 +5,7 @@ use crate::{
     profile::{atomic_json, limited_read, read_json},
     shell::{self, Desktop},
     supervisor::child_environment,
+    tools,
 };
 use base64::{engine::general_purpose::STANDARD, Engine};
 use serde_json::{json, Value};
@@ -150,6 +151,26 @@ fn theme_id(value: &Value) -> Result<&str> {
     }
     Ok(id)
 }
+fn project_link(destination: &str) -> Result<String> {
+    let suffix = match destination {
+        "source" => "",
+        "releases" => "/releases",
+        "issues" => "/issues",
+        "docs" => "#readme",
+        "license" => return Ok("https://opensource.org/license/mit".into()),
+        _ => return err("不支持的项目链接。"),
+    };
+    let project: Value = serde_json::from_str(include_str!("../../project.json"))
+        .map_err(|_| "项目地址无效。".to_owned())?;
+    let repository = project["repository"].as_str().ok_or("项目地址无效。")?;
+    if !matches(
+        r"^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$",
+        repository,
+    ) {
+        return err("项目地址无效。");
+    }
+    Ok(format!("{repository}{suffix}"))
+}
 async fn dispatch(app: &AppHandle, state: &Desktop, operation: &str, data: Value) -> Result<Value> {
     if matches!(operation, "start" | "stop" | "restart" | "check") {
         return state.supervisor.action(operation).await;
@@ -172,7 +193,44 @@ async fn dispatch(app: &AppHandle, state: &Desktop, operation: &str, data: Value
             value["catalog"] = p.catalog.clone();
             value["draft"] = p.draft.clone().unwrap_or(Value::Null);
             value["version"] = json!(env!("CARGO_PKG_VERSION"));
+            value["tools"] = tools::status(&directory);
             Ok(value)
+        }
+        "toolsStatus" => Ok(tools::status(&directory)),
+        "openProjectLink" => {
+            let url = project_link(data.as_str().ok_or("不支持的项目链接。")?)?;
+            app.opener()
+                .open_url(url, None::<&str>)
+                .map_err(|_| "无法打开浏览器。".to_owned())?;
+            Ok(Value::Null)
+        }
+        "checkTools" => {
+            tools::check_all(&directory).await?;
+            Ok(tools::status(&directory))
+        }
+        "pickTool" => {
+            let id = data.as_str().ok_or("工具类型无效。")?;
+            tools::download_url(id)?;
+            let Some(path) = choose(
+                state,
+                format!("{} · {}.exe", t("选择已解压的工具"), id),
+                vec!["exe"],
+                false,
+                None,
+            )
+            .await
+            else {
+                return Ok(Value::Null);
+            };
+            tools::configure(&directory, id, &path).await
+        }
+        "removeTool" => tools::remove(&directory, data.as_str().ok_or("工具类型无效。")?).await,
+        "openToolDownload" => {
+            let url = tools::download_url(data.as_str().ok_or("工具类型无效。")?)?;
+            app.opener()
+                .open_url(url, None::<&str>)
+                .map_err(|_| "无法打开浏览器。".to_owned())?;
+            Ok(Value::Null)
         }
         "status" => Ok(state.supervisor.snapshot()),
         "quit" => {

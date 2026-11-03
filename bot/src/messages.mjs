@@ -70,7 +70,7 @@ export const messages = {
     unsupportedPlatform: uiCopy("bot.d375de637701", "这条路我暂时还不认识呢。目前能接住的愿望来自 YouTube、B站和网易云音乐，请换一个这些平台的链接吧。"),
     extractTimeout: uiCopy("bot.cade805c64c3", "找这首歌花的时间有点久，这次解析已经超时了。稍后再点一次吧；若总是这样，请检查主机网络。"),
     responseTooLarge: uiCopy("bot.9c60a9fc1b2f", "平台一下送来了太多信息，这次解析只好先停下。试试单首歌曲或单个视频的链接吧。"),
-    extractorMissing: uiCopy("bot.1beb96f965d9", "找歌的小帮手 yt-dlp 没能启动。请在运行我的主机上执行 1-install.cmd，再来试一次。"),
+    extractorMissing: uiCopy("bot.1beb96f965d9", "找歌的小帮手 yt-dlp 没能启动。请在 Yachiyo 的工具库中检查或重新选择 yt-dlp，再来试一次。"),
     extractFailed: uiCopy("bot.f41917667b3d", "这次还没能找到可播放的音频。请先确认链接有效，再检查登录 Cookie、账号权限和地区限制；网页登录不会自动同步给我哦。"),
     invalidMetadata: uiCopy("bot.1a26f760f730", "平台送来的歌曲信息没能读懂。请重试；若仍失败，更新 yt-dlp 后再把链接交给我吧。"),
     unsupportedCollection: uiCopy("bot.261747fc40ed", "这类内容暂时还不能直接播放。请换成普通单曲或视频链接；直播和互动视频暂不支持。"),

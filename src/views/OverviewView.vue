@@ -3,6 +3,16 @@ import { state, t, service, go, labels, dot } from "../state";
 </script>
 <template>
   <section class="page" id="page-overview">
+    <div
+      v-if="state.ready && !state.tools.ready"
+      class="tool-notice"
+      role="status"
+    >
+      <span>{{ t("播放工具尚未就绪，先完成工具库配置。") }}</span
+      ><button class="secondary" @click="go('tools')">
+        {{ t("配置工具库") }} ↗
+      </button>
+    </div>
     <div class="hero">
       <div>
         <span class="eyebrow">YOUR MUSIC, ALWAYS WITH YOU</span>

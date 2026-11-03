@@ -1,3 +1,4 @@
+import { mediaTool } from './media-tools.mjs';
 import { spawn } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -21,8 +22,8 @@ try {
     ? { args: [...argsFor(track), '--no-progress', '-o', '-', '--load-info-json', '-'], input: JSON.stringify(track) }
     : await prepareDownload(track);
   const result = await new Promise(resolve => {
-    const download = spawn('yt-dlp', prepared.args, { windowsHide: true });
-    const decoder = spawn('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-i', 'pipe:0', '-vn', '-t', '7200', '-ac', '2', '-ar', '48000', '-f', 's16le', 'pipe:1'], { windowsHide: true });
+    const download = spawn(mediaTool('yt-dlp'), prepared.args, { windowsHide: true });
+    const decoder = spawn(mediaTool('ffmpeg'), ['-hide_banner', '-loglevel', 'error', '-i', 'pipe:0', '-vn', '-t', '7200', '-ac', '2', '-ar', '48000', '-f', 's16le', 'pipe:1'], { windowsHide: true });
     let pcmBytes = 0, downloadCode, decoderCode, closed = 0, timedOut = false, failedToStart = false;
     const timer = setTimeout(() => { timedOut = true; download.kill(); decoder.kill(); }, 120000);
     const finish = () => {

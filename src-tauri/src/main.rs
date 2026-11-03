@@ -6,6 +6,7 @@ mod profile;
 mod rpc;
 mod shell;
 mod supervisor;
+mod tools;
 use std::{
     path::PathBuf,
     sync::{
@@ -77,7 +78,8 @@ fn main() {
                 }
             };
             let auto_start = loaded.config.auto_start && !no_start;
-            let ready = loaded.config.ready(&loaded.secrets).is_ok();
+            let ready = loaded.config.ready(&loaded.secrets).is_ok()
+                && tools::status(&directory)["ready"] == true;
             if !isolated && !cfg!(debug_assertions) {
                 platform::login_startup(loaded.config.launch_at_login, &std::env::current_exe()?)
                     .map_err(std::io::Error::other)?;

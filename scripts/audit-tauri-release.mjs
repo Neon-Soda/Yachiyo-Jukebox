@@ -21,7 +21,7 @@ function configuredDirectory(value, fallback) {
 const releaseDirectory = configuredDirectory(host.releaseDirectory, join(root, 'releases'));
 const version = JSON.parse(await readFile(join(root, 'package.json'), 'utf8')).version;
 const binary = join(root, '.local/target/release/Yachiyo.exe');
-const forbidden = /^(?:\.env(?:\..*)?|user-data|private-runtime|\.local|credentials\.(?:bin|dpapi)|settings\.json|preferences\.json|known_hosts|id_ed25519|qa-dialog\.json)$/i;
+const forbidden = /^(?:\.env(?:\..*)?|user-data|private-runtime|\.local|credentials\.(?:bin|dpapi)|settings\.json|media-tools\.json|preferences\.json|known_hosts|id_ed25519|qa-dialog\.json)$/i;
 
 // Inspect build-time credentials only in memory; none are written to reports.
 const secrets = [];
@@ -54,6 +54,7 @@ let checked = 0, hits = 0, totalBytes = 0;
 async function walk(folder) {
   for (const entry of await readdir(folder, { withFileTypes: true })) {
     if (forbidden.test(entry.name)) throw new Error('Private artifact found in release payload.');
+    if (/^(?:ffmpeg|ffprobe|yt-dlp)\.exe$/i.test(entry.name)) throw new Error('Media tools must be selected by users and must not be bundled.');
     const file = join(folder, entry.name);
     if (entry.isDirectory()) await walk(file);
     else {

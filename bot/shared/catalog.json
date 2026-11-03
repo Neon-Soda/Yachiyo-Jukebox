@@ -933,7 +933,7 @@
     },
     "bot.1beb96f965d9": {
       "group": "bot",
-      "default": "找歌的小帮手 yt-dlp 没能启动。请在运行我的主机上执行 1-install.cmd，再来试一次。",
+      "default": "找歌的小帮手 yt-dlp 没能启动。请在 Yachiyo 的工具库中检查或重新选择 yt-dlp，再来试一次。",
       "max": 1800,
       "required": false
     },

@@ -1,3 +1,4 @@
+import { mediaTool } from './media-tools.mjs';
 import { copy as uiCopy } from './customization.mjs';
 import { spawn } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
@@ -92,7 +93,7 @@ export function createMusicSearch({ fetchImpl = fetch, spawnProcess = spawn, now
     return new Promise((resolve, reject) => {
       const args = ['--ignore-config', '--flat-playlist', '--dump-single-json', '--skip-download', '--no-warnings', '--socket-timeout', '12', '--retries', '0', '--playlist-end', String(limit)];
       if (process.env.YOUTUBE_COOKIES) args.push('--cookies', process.env.YOUTUBE_COOKIES);
-      const child = spawnProcess('yt-dlp', [...args, '--', `ytsearch${limit}:${query}`], { windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'] });
+      const child = spawnProcess(mediaTool('yt-dlp'), [...args, '--', `ytsearch${limit}:${query}`], { windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'] });
       child.stdout.setEncoding('utf8');
       let output = '', settled = false;
       const finish = (error, value) => {

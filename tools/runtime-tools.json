@@ -6,21 +6,32 @@
       "name": "node.exe",
       "sha256": "3602f2bb1a10f2cbab4c36886218a33c1ab3db87290e73b033c46c77147d0237",
       "bytes": 92825416
-    },
-    {
-      "name": "yt-dlp.exe",
-      "sha256": "66674953fe251b89f4d08c5f0e35e0728679bd67ab3d7d05c0562af101dd3e7a",
-      "bytes": 17840399
-    },
+    }
+  ],
+  "externalMediaTools": [
     {
       "name": "ffmpeg.exe",
-      "sha256": "589e50b766d251afdf181dd664d40bd94407e200b019989fd7468c7d118a28d0",
-      "bytes": 227823104
+      "downloadPage": "https://www.gyan.dev/ffmpeg/builds/#release-builds",
+      "minimumVersion": "6.0",
+      "requiredCapabilities": [
+        "AAC/Opus/MP3 decode",
+        "libmp3lame encode",
+        "48 kHz stereo PCM",
+        "seeking"
+      ]
     },
     {
       "name": "ffprobe.exe",
-      "sha256": "02264dfa4f56baaa31e443ece8aa16d397f6b008200e7fd184d22b9009e75fd3",
-      "bytes": 227621376
+      "downloadPage": "https://www.gyan.dev/ffmpeg/builds/#release-builds",
+      "requirement": "same release version as ffmpeg; JSON duration output"
+    },
+    {
+      "name": "yt-dlp.exe",
+      "downloadPage": "https://github.com/yt-dlp/yt-dlp/releases/latest",
+      "minimumVersion": "2025.01.01",
+      "requiredCapabilities": [
+        "--js-runtimes"
+      ]
     }
   ]
 }

@@ -1,5 +1,11 @@
 Yachiyo third-party components
 
+Yachiyo
+-------
+Copyright (c) 2026 Neon-Soda. MIT License, see LICENSE in the source tree
+or Yachiyo-LICENSE.txt beside this file in an installed application.
+https://github.com/Neon-Soda/Yachiyo-Jukebox
+
 Desktop application
 -------------------
 Tauri 2: Apache-2.0 OR MIT.
@@ -13,24 +19,30 @@ The installer can download its bootstrapper when the runtime is missing.
 Rust and JavaScript dependency versions are recorded in Cargo.lock and the
 package-lock.json files. Each dependency retains its own license terms.
 
-External runtime tools
-----------------------
-The tool manifest records the binaries used for this release. Binary tools
-are provisioned separately when building from source.
-
+Bundled runtime
+---------------
 Node.js 24.19.0: MIT and bundled third-party licenses, see Node-LICENSE.txt.
 Corresponding source: https://nodejs.org/dist/v24.19.0/node-v24.19.0.tar.xz
 
-yt-dlp 2026.08.19: Unlicense for the project; the Windows executable includes
-third-party components with their own licenses. See yt-dlp-LICENSE.txt and
-https://github.com/yt-dlp/yt-dlp/blob/2026.08.19/THIRD_PARTY_LICENSES.txt
-Source: https://github.com/yt-dlp/yt-dlp/tree/2026.08.19
-
-FFmpeg 9.0.2 full build from Gyan: GPLv3, see FFmpeg-LICENSE.txt.
-Build documentation and source locations: FFmpeg-BUILD.txt and
-https://www.gyan.dev/ffmpeg/builds/
-FFmpeg source: https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz
-The application invokes FFmpeg and FFprobe as separate processes.
-
 JavaScript dependencies retain their LICENSE files in runtime/node_modules
-when packaged. This notice does not set a license for the Yachiyo project.
+when packaged. The runtime manifest identifies the bundled Node executable.
+
+User-selected external media tools
+----------------------------------
+FFmpeg, FFprobe and yt-dlp executables are not included in this installer.
+The application opens upstream download pages in the user's browser, then
+checks executables selected by the user. It invokes these tools as separate
+processes. Their files and licenses remain with the user's download.
+
+FFmpeg and FFprobe: LGPL or GPL depending on the selected build.
+Project and licensing: https://ffmpeg.org/legal.html
+Windows build provider: https://www.gyan.dev/ffmpeg/builds/
+
+yt-dlp: Unlicense for the project; upstream Windows executables contain
+third-party components governed by their respective licenses.
+Releases and notices: https://github.com/yt-dlp/yt-dlp
+
+Anyone who separately bundles or redistributes these external tools must
+handle the applicable notices and corresponding-source obligations for the
+actual binaries they distribute. Selecting tools locally does not change
+their licenses. The Yachiyo MIT license does not replace third-party licenses.

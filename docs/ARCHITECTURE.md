@@ -1,5 +1,7 @@
 # 架构
 
+**简体中文** · [English](ARCHITECTURE.en.md) · [文档目录](README.md)
+
 ## 组成
 
 ```text
@@ -29,6 +31,12 @@ Rust 启动一个 Node Bot，并在选择 SSH 模式时管理一个专用 SSH �
 
 Bot 通过校验进程身份的私有命名管道报告就绪状态与心跳。Bot 异常退出采用退避重试，SSH 断线会重连。连接状态同时参考心跳、实际进程和 HTTP 响应中的应用标识。
 
+## 媒体工具
+
+安装资源只包含 Node.js 运行时，FFmpeg、FFprobe 和 yt-dlp 由用户下载并选择。Rust 校验 Windows x64 格式、正式版本与实际音频能力，原子保存关联；每次启动 Bot 时重新校验，再通过专用环境变量传递具体文件路径。Node 的媒体执行入口使用这些路径，避免取到 PATH 中的另一个同名工具；独立运行 Node Bot 时仍保留 PATH 兼容。
+
+工具检查使用无凭据环境、超时限制和独立临时音频。SHA-256 是文件身份记录，不代表对发布者的认证。工具配置属于个人数据，发行审计禁止媒体工具二进制与个人关联文件进入安装包。
+
 ## 音乐与 Activity
 
 Node 后端负责 Discord 登录、语音播放、曲目解析、搜索、房间状态、缓存及 Activity API。Activity 前端位于 `bot/activity/`，与桌面控制界面分别构建。
@@ -46,3 +54,5 @@ Node 后端负责 Discord 登录、语音播放、曲目解析、搜索、房间
 `scripts/stage.mjs` 从明确的允许列表准备 Bot、Activity、依赖和运行工具。个人目录、环境文件、日志和归档不会进入运行资源。发行审计检查资源范围、模块依赖及安装包校验值。
 
 Windows 路径、IPC、DPAPI 和进程生命周期的具体处理保留在 Rust 层；业务媒体处理继续使用现有 Node 实现。
+
+数据保留与外部请求见 [隐私政策](PRIVACY.md)，构建命令见 [开发指南](DEVELOPMENT.md)。

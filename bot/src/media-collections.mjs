@@ -1,3 +1,4 @@
+import { mediaTool } from './media-tools.mjs';
 import { spawn } from 'node:child_process';
 import { parseLink } from './media.mjs';
 import { mediaArtwork } from './media-artwork.mjs';
@@ -145,7 +146,7 @@ export async function expandMediaCollection(track, { fetchImpl = fetch, spawnPro
   return new Promise((resolve, reject) => {
     const args = ['--ignore-config', '--yes-playlist', '--flat-playlist', '--skip-download', '--dump-single-json', '--no-warnings', '--socket-timeout', '12', '--retries', '0', '--playlist-end', String(MAX_QUEUE_TRACKS + 1)];
     if (process.env.YOUTUBE_COOKIES) args.push('--cookies', process.env.YOUTUBE_COOKIES);
-    const child = spawnProcess('yt-dlp', [...args, '--', `https://www.youtube.com/playlist?list=${list}`], { windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'] });
+    const child = spawnProcess(mediaTool('yt-dlp'), [...args, '--', `https://www.youtube.com/playlist?list=${list}`], { windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'] });
     child.stdout.setEncoding('utf8');
     let output = '', settled = false;
     const finish = (error, value) => { if (settled) return; settled = true; clearTimeout(timer); error ? reject(error) : resolve(value); };

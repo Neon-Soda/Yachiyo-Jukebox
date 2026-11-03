@@ -213,14 +213,29 @@ mod tests {
     };
     #[test]
     fn canonical_windows_resource_paths_can_launch_node_modules() {
-        let directory=std::env::temp_dir().join(format!("yachiyo-node-path-{}",uuid::Uuid::new_v4()));
-        std::fs::create_dir_all(&directory).unwrap();let file=directory.join("probe.mjs");
-        std::fs::write(&file,"console.log('ready')").unwrap();
-        let canonical=file.canonicalize().unwrap();
-        let node=Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().join("tools/win32-x64/node.exe");
-        let output=Command::new(external_path(&node.canonicalize().unwrap())).arg(external_path(&canonical)).creation_flags(NO_WINDOW).output().unwrap();
-        assert!(output.status.success());assert_eq!(String::from_utf8_lossy(&output.stdout).trim(),"ready");
-        assert!(directory.file_name().unwrap().to_string_lossy().starts_with("yachiyo-node-path-"));std::fs::remove_dir_all(directory).unwrap();
+        let directory =
+            std::env::temp_dir().join(format!("yachiyo-node-path-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&directory).unwrap();
+        let file = directory.join("probe.mjs");
+        std::fs::write(&file, "console.log('ready')").unwrap();
+        let canonical = file.canonicalize().unwrap();
+        let node = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .unwrap()
+            .join("tools/win32-x64/node.exe");
+        let output = Command::new(external_path(&node.canonicalize().unwrap()))
+            .arg(external_path(&canonical))
+            .creation_flags(NO_WINDOW)
+            .output()
+            .unwrap();
+        assert!(output.status.success());
+        assert_eq!(String::from_utf8_lossy(&output.stdout).trim(), "ready");
+        assert!(directory
+            .file_name()
+            .unwrap()
+            .to_string_lossy()
+            .starts_with("yachiyo-node-path-"));
+        std::fs::remove_dir_all(directory).unwrap();
     }
     #[test]
     fn closing_job_terminates_owned_worker_and_descendants() {

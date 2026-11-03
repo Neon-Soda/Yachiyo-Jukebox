@@ -1,3 +1,4 @@
+import { mediaTool, ffmpegLocationArgs } from './media-tools.mjs';
 import { spawn } from 'node:child_process';
 import { messages, UserFacingError } from './messages.mjs';
 import { publicBilibiliInfo } from './bilibili.mjs';
@@ -27,7 +28,7 @@ export function parseLink(input) {
 }
 
 export function argsFor(track) {
-  const args = ['--ignore-config', '--no-playlist', '--no-warnings', '--socket-timeout', '20', '--retries', '2', '--js-runtimes', 'node', '-f', 'bestaudio/best'];
+  const args = [...ffmpegLocationArgs(), '--ignore-config', '--no-playlist', '--no-warnings', '--socket-timeout', '20', '--retries', '2', '--js-runtimes', 'node', '-f', 'bestaudio/best'];
   const cookie = process.env[`${track.platform}_COOKIES`];
   if (cookie) args.push('--cookies', cookie);
   return args;
@@ -58,7 +59,7 @@ export async function inspect(track, { spawnProcess = spawn, retryDelayMs = 750,
 
 function inspectOnce(track, spawnProcess, timeoutMs) {
   return new Promise((resolve, reject) => {
-    const child = spawnProcess('yt-dlp', [...argsFor(track), '--dump-single-json', '--skip-download', '--', track.url], { windowsHide: true });
+    const child = spawnProcess(mediaTool('yt-dlp'), [...argsFor(track), '--dump-single-json', '--skip-download', '--', track.url], { windowsHide: true });
     let out = '', stderr = ''; let settled = false;
     const finish = (err, value) => {
       if (settled) return;

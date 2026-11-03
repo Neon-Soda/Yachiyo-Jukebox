@@ -185,7 +185,7 @@ impl Actor {
                         "shutdown"=>{let result=self.stop().await;self.publish();let _=request.result.send(result.map(|_|json!(true)));break},
                         _=>err("不允许此请求。"),
                     };
-                    if let Err(ref e)=result{self.event(e);}self.publish();let _=request.result.send(result.map(|_|serde_json::to_value(self.status.lock().unwrap().clone()).unwrap()));
+                    if let Err(ref e)=result{self.event(e);self.status.lock().unwrap().reason=e.clone();}self.publish();let _=request.result.send(result.map(|_|serde_json::to_value(self.status.lock().unwrap().clone()).unwrap()));
                 }
                 Some(message)=self.feedback_rx.recv()=>{
                     match message{
@@ -211,6 +211,7 @@ impl Actor {
             (p.config.clone(), p.secrets.clone())
         };
         config.ready(&secrets)?;
+        let media_tools = crate::tools::check_all(&self.directory()).await?;
         if config.activity_enabled
             && timeout(
                 Duration::from_secs(1),
@@ -242,6 +243,12 @@ impl Actor {
             uuid::Uuid::new_v4().simple()
         );
         let mut env = child_environment(&config, &secrets, &self.runtime, &self.directory());
+        for (id, path) in media_tools {
+            env.insert(
+                format!("YACHIYO_{}_PATH", id.replace('-', "_").to_uppercase()),
+                path,
+            );
+        }
         env.insert("YACHIYO_CONTROL_PIPE".into(), pipe_name);
         env.insert("YACHIYO_CONTROL_NONCE".into(), nonce.clone());
         let mut child = Command::new(self.runtime.join("tools/node.exe"))

@@ -14,6 +14,8 @@ import type {
   Snapshot,
   Settings,
   Draft,
+  ToolsStatus,
+  MediaTool,
 } from "./types";
 
 const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
@@ -30,9 +32,13 @@ export const state = reactive({
   busy: false,
   preferenceSaving: false,
   page: "overview",
-  version: "2.0.0",
+  version: "1.1.0",
   pending: false,
   showKey: false,
+  tools: { ready: false, items: [] } as ToolsStatus,
+  toolsPrompt: false,
+  toolsPromptDismissed: false,
+  toolChecking: false,
   config: {
     version: 1,
     guildId: "",
@@ -91,6 +97,8 @@ export const pages: Record<string, [string, string, string]> = {
   overview: ["运行概览", "OVERVIEW", "◉"],
   connection: ["连接与账户", "CONNECTION", "⌁"],
   playback: ["播放与启动", "PLAYBACK", "▷"],
+  tools: ["工具库", "TOOLS", "◇"],
+  info: ["关于", "INFO", "ⓘ"],
   appearance: ["应用外观", "APPEARANCE", "◒"],
   theme: ["点歌台主题", "THEME", "◐"],
   copy: ["提示文案", "COPY", "≡"],
@@ -145,6 +153,13 @@ export async function run(action: () => Promise<unknown>, success = "") {
 export async function service(operation: string) {
   await run(
     async () => {
+      if (operation === "start" || operation === "restart") {
+        await refreshTools();
+        if (!state.tools.ready) {
+          state.toolsPrompt = true;
+          return;
+        }
+      }
       state.status = await call<Status>(operation);
       if (operation === "restart" || operation === "start")
         state.pending = false;
@@ -157,7 +172,51 @@ export function go(page: string) {
   state.page = page;
   window.scrollTo(0, 0);
   if (page === "storage") void run(refreshCache);
+  if (page === "tools") void run(refreshTools);
   if (page === "theme") void refreshPreview();
+}
+export async function refreshTools() {
+  state.tools = await call<ToolsStatus>("toolsStatus");
+}
+export async function pickTool(id: MediaTool["id"]) {
+  await run(async () => {
+    state.toolChecking = true;
+    try {
+      const result = await call<ToolsStatus | null>("pickTool", id);
+      if (result) {
+        state.tools = result;
+        state.pending ||= state.status.wanted;
+        toast("工具已检查并保存。");
+      }
+    } finally {
+      state.toolChecking = false;
+    }
+  });
+}
+export async function checkTools() {
+  await run(async () => {
+    state.toolChecking = true;
+    try {
+      state.tools = await call<ToolsStatus>("checkTools");
+    } finally {
+      state.toolChecking = false;
+      await refreshTools();
+    }
+  }, "版本和播放能力检查通过。");
+}
+export async function removeTool(id: MediaTool["id"]) {
+  await run(async () => {
+    state.tools = await call<ToolsStatus>("removeTool", id);
+    state.pending ||= state.status.wanted;
+  }, "已取消工具关联，原文件保留。");
+}
+export function dismissToolsPrompt() {
+  state.toolsPrompt = false;
+  state.toolsPromptDismissed = true;
+}
+export function setupTools() {
+  dismissToolsPrompt();
+  go("tools");
 }
 export const labels: Record<string, string> = {
   stopped: "已停止",
@@ -496,6 +555,7 @@ function draft(): Draft {
     copyPage: state.copyPage,
     pending: state.pending,
     themeState: state.themeState,
+    toolsPromptDismissed: state.toolsPromptDismissed,
   });
 }
 const systemColors = window.matchMedia("(prefers-color-scheme: dark)");
@@ -554,6 +614,7 @@ export async function initialize() {
     state.saved = data.saved;
     state.status = data.status;
     state.version = data.version;
+    state.tools = data.tools;
     if (data.draft) {
       const d = data.draft;
       Object.assign(state, {
@@ -567,6 +628,7 @@ export async function initialize() {
         copyPage: d.copyPage,
         pending: d.pending,
         themeState: d.themeState,
+        toolsPromptDismissed: d.toolsPromptDismissed ?? false,
       });
     }
     await loadLibrary();
@@ -581,6 +643,7 @@ export async function initialize() {
       }
     });
     state.ready = true;
+    state.toolsPrompt = !state.tools.ready && !state.toolsPromptDismissed;
     document.documentElement.dataset.ready = "true";
     if (state.page === "theme") void refreshPreview();
   } catch (error) {

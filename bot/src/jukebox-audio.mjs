@@ -1,3 +1,4 @@
+import { mediaTool } from './media-tools.mjs';
 import { EventEmitter } from 'node:events';
 import { spawn } from 'node:child_process';
 import { createAudioPlayer, createAudioResource, AudioPlayerStatus, StreamType, NoSubscriberBehavior, entersState } from '@discordjs/voice';
@@ -19,7 +20,7 @@ export class JukeboxAudio extends EventEmitter {
     const lease = await this.cache.get(track, signal);
     if (signal.aborted || this.serial !== version) { lease.release(); throw new UserFacingError('cancelled'); }
     this.lease = lease; this.offset = position;
-    const child = spawn('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-ss', String(position), '-i', lease.file, '-vn', '-ac', '2', '-ar', '48000', '-f', 's16le', 'pipe:1'], { windowsHide: true });
+    const child = spawn(mediaTool('ffmpeg'), ['-hide_banner', '-loglevel', 'error', '-ss', String(position), '-i', lease.file, '-vn', '-ac', '2', '-ar', '48000', '-f', 's16le', 'pipe:1'], { windowsHide: true });
     this.child = child; child.stderr.resume(); child.stdin.end();
     let failed = false;
     const fail = () => {

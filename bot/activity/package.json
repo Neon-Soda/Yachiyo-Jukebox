@@ -8,5 +8,6 @@
   "dependencies": {
     "@discord/embedded-app-sdk": "^2.5.0",
     "esbuild": "^0.28.2"
-  }
+  },
+  "license": "MIT"
 }

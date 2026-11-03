@@ -1,6 +1,9 @@
 [package]
 name = "yachiyo-desktop"
-version = "2.0.0"
+version = "1.1.0"
+license = "MIT"
+authors = ["Neon-Soda"]
+repository = "https://github.com/Neon-Soda/Yachiyo-Jukebox"
 edition = "2021"
 default-run = "Yachiyo"
 
@@ -21,6 +24,7 @@ tokio = { version = "1", features = ["full"] }
 reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
 axum = "0.8"
 regex = "1"
+sha2 = "0.10"
 uuid = { version = "1", features = ["v4"] }
 base64 = "0.22"
 aes-gcm = "0.10"

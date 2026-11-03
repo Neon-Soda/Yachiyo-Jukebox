@@ -72,6 +72,19 @@ export interface Draft {
   copyPage: number;
   pending: boolean;
   themeState: string;
+  toolsPromptDismissed?: boolean;
+}
+export interface MediaTool {
+  id: "ffmpeg" | "ffprobe" | "yt-dlp";
+  path: string;
+  version: string;
+  sha256: string;
+  checkedAt: number | null;
+  state: "ready" | "missing" | "changed";
+}
+export interface ToolsStatus {
+  ready: boolean;
+  items: MediaTool[];
 }
 export interface Snapshot extends Settings {
   status: Status;
@@ -80,4 +93,5 @@ export interface Snapshot extends Settings {
   catalog: Catalog;
   version: string;
   draft: Draft | null;
+  tools: ToolsStatus;
 }
