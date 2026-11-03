@@ -2,7 +2,7 @@
 
 **简体中文** · [English](DOWNLOADS.en.md) · [文档目录](README.md)
 
-## Yachiyo
+## Yachiyo Jukebox
 
 安装包与更新说明统一发布在 **[Neon-Soda/Yachiyo-Jukebox Releases](https://github.com/Neon-Soda/Yachiyo-Jukebox/releases)**。
 
@@ -31,7 +31,7 @@ Get-FileHash -LiteralPath '.\Yachiyo-1.1.0-Windows-x64.exe' -Algorithm SHA256
 | --- | --- | --- |
 | FFmpeg + FFprobe | [Gyan release builds](https://www.gyan.dev/ffmpeg/builds/#release-builds)，选择 **release essentials ZIP**，解压后选择 `bin/ffmpeg.exe` | Windows x64 正式版 ≥ 6.0；同目录 `ffprobe.exe` 与其正式版本一致 |
 | yt-dlp | [yt-dlp Releases](https://github.com/yt-dlp/yt-dlp/releases/latest)，选择 **`yt-dlp.exe`** | Windows x64，2025 年或更新的正式版，并实际支持 `--js-runtimes` |
-| WebView2 | [Microsoft WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)，Evergreen Runtime x64 | 系统缺少时，Yachiyo 安装器可下载安装引导程序；也可从微软页面手动安装 |
+| WebView2 | [Microsoft WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)，Evergreen Runtime x64 | 系统缺少时，Yachiyo Jukebox 安装器可下载安装引导程序；也可从微软页面手动安装 |
 | OpenSSH Client（仅 SSH 模式） | [Microsoft Windows OpenSSH 安装说明](https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse) | Windows 的 OpenSSH 客户端；其他连接模式不需要它 |
 
 将媒体工具放在稳定的本地目录，之后不要随意移动。应用只保存关联，不会把所选文件复制进安装资源，也不会替你下载或更新媒体工具。文件移动或升级后需重新检查，再重启 Bot。

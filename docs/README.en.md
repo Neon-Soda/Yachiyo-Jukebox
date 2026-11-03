@@ -1,8 +1,8 @@
-# Yachiyo documentation
+# Yachiyo Jukebox documentation
 
 [简体中文](README.md) · **English** · [Project home](../README.en.md)
 
-Yachiyo is a self-hosted Discord music bot and Activity jukebox. The desktop manager currently targets Windows 10 / 11 x64. These guides describe public version 1.1.0.
+Yachiyo Jukebox is a self-hosted Discord music bot and Activity jukebox. The desktop manager currently targets Windows 10 / 11 x64. These guides describe public version 1.1.0.
 
 ## Users
 

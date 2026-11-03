@@ -1,7 +1,7 @@
-Yachiyo third-party components
+Yachiyo Jukebox third-party components
 
-Yachiyo
--------
+Yachiyo Jukebox
+---------------
 Copyright (c) 2026 Neon-Soda. MIT License, see LICENSE in the source tree
 or Yachiyo-LICENSE.txt beside this file in an installed application.
 https://github.com/Neon-Soda/Yachiyo-Jukebox
@@ -45,4 +45,4 @@ Releases and notices: https://github.com/yt-dlp/yt-dlp
 Anyone who separately bundles or redistributes these external tools must
 handle the applicable notices and corresponding-source obligations for the
 actual binaries they distribute. Selecting tools locally does not change
-their licenses. The Yachiyo MIT license does not replace third-party licenses.
+their licenses. The Yachiyo Jukebox MIT license does not replace third-party licenses.

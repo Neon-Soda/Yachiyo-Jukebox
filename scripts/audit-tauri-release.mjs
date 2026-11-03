@@ -1,7 +1,8 @@
-import { readFile, readdir, stat, writeFile, mkdir, copyFile } from 'node:fs/promises';
+import { readFile, readdir, stat, writeFile, mkdir } from 'node:fs/promises';
 import { resolve, join, dirname, isAbsolute, parse } from 'node:path';
 import { parseEnv } from 'node:util';
 import { createHash } from 'node:crypto';
+import { archiveVersionedInstaller } from './release-archive.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const stage = join(root, 'stage');
@@ -90,9 +91,7 @@ if (hits) throw new Error('Private credential matched in release payload.');
 const nsis = join(root, '.local/target/release/bundle/nsis');
 const setup = `${config.productName}_${version}_x64-setup.exe`;
 await stat(join(nsis, setup));
-await mkdir(releaseDirectory, { recursive: true });
-const output = join(releaseDirectory, `Yachiyo-${version}-Windows-x64.exe`);
-await copyFile(join(nsis, setup), output);
+
 
 // NSIS embeds the NSS bundle marker; the loose executable is restored to UNK.
 const packaged = Buffer.from(bytes), marker = Buffer.from('__TAURI_BUNDLE_TYPE_VAR_UNK');
@@ -100,13 +99,14 @@ const offset = packaged.indexOf(marker);
 if (offset < 0 || packaged.indexOf(marker, offset + 1) >= 0) throw new Error('Unexpected Tauri bundle marker.');
 Buffer.from('__TAURI_BUNDLE_TYPE_VAR_NSS').copy(packaged, offset);
 const digest = content => createHash('sha256').update(content).digest('hex');
+const archived = await archiveVersionedInstaller({ releaseRoot: releaseDirectory, version, installerPath: join(nsis, setup) });
+const output = archived.installerPath;
 const result = {
   version, passed: true, checkedTextFiles: checked, credentialPatternsChecked: secrets.length,
   personalCredentialMatches: hits, runtimeBytes: totalBytes, applicationBytes: bytes.length,
   applicationSha256: digest(bytes), nsisApplicationSha256: digest(packaged), installerPath: output,
-  installerBytes: (await stat(output)).size, installerSha256: digest(await readFile(output)), browserBundled: false,
+  installerBytes: archived.installerBytes, installerSha256: archived.installerSha256, archiveReused: archived.reused, browserBundled: false,
 };
-await writeFile(output + '.sha256', `${result.installerSha256}  ${output.slice(dirname(output).length + 1)}\n`);
 const report = join(root, '.local/logs/tauri-release-audit.json');
 await mkdir(dirname(report), { recursive: true });
 await writeFile(report, JSON.stringify(result, null, 2));

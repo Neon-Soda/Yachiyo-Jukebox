@@ -10,7 +10,7 @@
 
 ## Discord 应用
 
-在 [Discord Developer Portal](https://discord.com/developers/applications) 中创建或选择自己的应用与 Bot。在 Yachiyo 的「连接与账户」中填写：
+在 [Discord Developer Portal](https://discord.com/developers/applications) 中创建或选择自己的应用与 Bot。在 Yachiyo Jukebox 的「连接与账户」中填写：
 
 | 设置 | 用途 |
 | --- | --- |

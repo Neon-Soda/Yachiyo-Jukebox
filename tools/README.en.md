@@ -11,7 +11,7 @@ Before building, place Windows x64 `node.exe` in `tools/win32-x64`. Its version 
 First launch shows guidance when tools are missing. You can also open the tool library at any time.
 
 1. Open [Gyan's FFmpeg release builds](https://www.gyan.dev/ffmpeg/builds/#release-builds), download the Windows x64 release essentials ZIP, and extract it to a stable folder.
-2. Select `bin/ffmpeg.exe` in Yachiyo. It automatically checks `ffprobe.exe` in the same directory. Both need the same stable release version, at least 6.0.
+2. Select `bin/ffmpeg.exe` in Yachiyo Jukebox. It automatically checks `ffprobe.exe` in the same directory. Both need the same stable release version, at least 6.0.
 3. Download `yt-dlp.exe` from [yt-dlp Releases](https://github.com/yt-dlp/yt-dlp/releases/latest), save it to a stable folder, and select it. It must be a stable release from 2025 or later and actually support `--js-runtimes`.
 4. Validation checks x64 executable format, versions, AAC/Opus/MP3 decoding, libmp3lame encoding, seeking, and JSON duration output. New associations are saved only on success.
 

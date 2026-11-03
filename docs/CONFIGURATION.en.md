@@ -10,7 +10,7 @@ The application checks executable format, versions, audio codecs, duration readi
 
 ## Discord application
 
-Create or select your own application and bot in the [Discord Developer Portal](https://discord.com/developers/applications). Enter the following in Yachiyo's connection settings:
+Create or select your own application and bot in the [Discord Developer Portal](https://discord.com/developers/applications). Enter the following in Yachiyo Jukebox's connection settings:
 
 | Setting | Purpose |
 | --- | --- |
@@ -26,7 +26,7 @@ Use the application's bot invitation action, and ensure the bot can view, connec
 Activities need an HTTPS endpoint reachable by Discord. Having a public IP address, domain, or SSH login does not by itself provide HTTPS.
 
 1. Enable Activities in the Developer Portal.
-2. Enter your public HTTPS root URL in Yachiyo, such as `https://music.example.com`.
+2. Enter your public HTTPS root URL in Yachiyo Jukebox, such as `https://music.example.com`.
 3. Use the values shown in the application for URL Mapping: Prefix `/`, Target the hostname of your HTTPS address.
 4. Register the OAuth2 Redirect URI shown in the application. The current placeholder is `https://127.0.0.1`; the Discord Activity SDK handles the actual authorization return.
 5. Save and start the bot. Check Discord, local web service, and public HTTPS status.
@@ -35,13 +35,13 @@ Activity testing access and distribution permissions must also be configured in 
 
 ## Connection modes
 
-| Mode | When to use it | What Yachiyo manages |
+| Mode | When to use it | What Yachiyo Jukebox manages |
 | --- | --- | --- |
 | Direct public connection | You already have public HTTPS or your own reverse proxy | Bot and web service |
 | SSH reverse tunnel | Your server forwards requests to the desktop HTTP service | Bot, a dedicated SSH process, and reconnection |
 | Existing tunnel / proxy | You independently run frp or another proxy | Bot and final HTTPS connectivity checks |
 
-The HTTP service defaults to `127.0.0.1:3178`. Listening on all interfaces is needed only when the reverse proxy must reach this machine over the network. The operator configures certificates, DNS, firewall rules, and the reverse proxy. Yachiyo does not install server software automatically.
+The HTTP service defaults to `127.0.0.1:3178`. Listening on all interfaces is needed only when the reverse proxy must reach this machine over the network. The operator configures certificates, DNS, firewall rules, and the reverse proxy. Yachiyo Jukebox does not install server software automatically.
 
 For SSH mode, enter the host, user, SSH port, and remote loopback port. Paste a private key and verified `known_hosts`, or import them from files. Unattended connection requires a dedicated key without a passphrase; the application does not save a server password. Empty secret inputs preserve saved credentials; use the separate removal buttons to clear them. Restart the bot after changing runtime settings.
 

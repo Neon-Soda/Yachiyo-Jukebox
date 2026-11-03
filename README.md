@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/app.png" width="112" height="112" alt="Yachiyo 图标" />
+  <img src="assets/app.png" width="112" height="112" alt="Yachiyo Jukebox 图标" />
   <h1>Yachiyo Jukebox</h1>
   <p>在 Discord 语音频道里，和朋友一起点歌。</p>
   <p>Windows 桌面管理 · 共享 Activity 点歌台 · 自托管</p>
@@ -16,7 +16,7 @@
   <a href="LICENSE">MIT License</a>
 </p>
 
-Yachiyo 把 Discord 音乐 Bot 和可交互的 Activity 点歌台放在一起：用按钮点歌、暂停、切歌和管理歌单，由 Bot 在语音频道播放音频。只想听歌的朋友无需打开 Activity。
+Yachiyo Jukebox 把 Discord 音乐 Bot 和可交互的 Activity 点歌台放在一起：用按钮点歌、暂停、切歌和管理歌单，由 Bot 在语音频道播放音频。只想听歌的朋友无需打开 Activity。
 
 桌面应用使用 **Tauri 2 + Vue 3 + TypeScript + Rust**，音乐后端使用 **Node.js**。每位部署者使用自己的 Discord 应用、Bot 和网络服务；项目不提供公共 Bot、音乐资源库或代管服务。
 
@@ -44,11 +44,11 @@ Yachiyo 把 Discord 音乐 Bot 和可交互的 Activity 点歌台放在一起：
 
 ## 下载
 
-**[前往 Yachiyo Releases](https://github.com/Neon-Soda/Yachiyo-Jukebox/releases)** 获取已发布的 Windows 安装包、校验文件和更新说明。若尚无发布条目或安装包附件，请按 [开发指南](docs/DEVELOPMENT.md) 从源码构建。
+**[前往 Yachiyo Jukebox Releases](https://github.com/Neon-Soda/Yachiyo-Jukebox/releases)** 获取已发布的 Windows 安装包、校验文件和更新说明。若尚无发布条目或安装包附件，请按 [开发指南](docs/DEVELOPMENT.md) 从源码构建。
 
 | 需要什么 | 下载入口 |
 | --- | --- |
-| Yachiyo Windows x64 安装包 | [本项目 Releases](https://github.com/Neon-Soda/Yachiyo-Jukebox/releases) |
+| Yachiyo Jukebox Windows x64 安装包 | [本项目 Releases](https://github.com/Neon-Soda/Yachiyo-Jukebox/releases) |
 | 当前源码 | [浏览仓库](https://github.com/Neon-Soda/Yachiyo-Jukebox) · [下载 main 分支 ZIP](https://github.com/Neon-Soda/Yachiyo-Jukebox/archive/refs/heads/main.zip) |
 | FFmpeg / FFprobe | [Gyan Windows 构建页](https://www.gyan.dev/ffmpeg/builds/#release-builds) |
 | yt-dlp | [上游 Releases](https://github.com/yt-dlp/yt-dlp/releases/latest) |
@@ -58,7 +58,7 @@ Yachiyo 把 Discord 音乐 Bot 和可交互的 Activity 点歌台放在一起：
 
 ## 开始使用
 
-1. 安装 Yachiyo，在「工具库」关联 FFmpeg / FFprobe 和 yt-dlp。
+1. 安装 Yachiyo Jukebox，在「工具库」关联 FFmpeg / FFprobe 和 yt-dlp。
 2. 在 [Discord Developer Portal](https://discord.com/developers/applications) 创建自己的应用和 Bot，将 Bot 邀请到服务器。
 3. 在「连接与账户」填写 Application ID、服务器 ID、Bot Token；使用 Activity 时填写 Client Secret。
 4. 配置公网 HTTPS，并按应用显示的值设置 Discord Activity URL Mapping 和 OAuth2 Redirect URI。可以使用已有公网服务、应用管理的 SSH 反向隧道，或自行运行的代理。
@@ -98,7 +98,7 @@ npm run stage
 npm start
 ```
 
-构建安装包使用 `npm run dist`。测试、目录结构和贡献约定见 [开发指南](docs/DEVELOPMENT.md)。
+构建安装包使用 `npm run dist`，产物自动保存到 `releases/<版本>/`，已有版本不会被不同的安装包覆盖。测试、目录结构和贡献约定见 [开发指南](docs/DEVELOPMENT.md)。
 
 ## 隐私与使用说明
 
@@ -110,6 +110,6 @@ npm start
 
 ## 许可与致谢
 
-Yachiyo 自有源码和文档采用 [MIT License](LICENSE)，Copyright © 2026 **Neon-Soda**。第三方组件、媒体内容和用户导入素材不因本项目的 MIT 许可而改变其权利归属或许可条件。
+Yachiyo Jukebox 自有源码和文档采用 [MIT License](LICENSE)，Copyright © 2026 **Neon-Soda**。第三方组件、媒体内容和用户导入素材不因本项目的 MIT 许可而改变其权利归属或许可条件。
 
-感谢 [Tauri](https://github.com/tauri-apps/tauri)、[Vue](https://github.com/vuejs/core)、[Node.js](https://nodejs.org/)、[discord.js](https://github.com/discordjs/discord.js)、[Discord Embedded App SDK](https://github.com/discord/embedded-app-sdk)、[yt-dlp](https://github.com/yt-dlp/yt-dlp) 和 [FFmpeg](https://ffmpeg.org/) 等项目。完整声明入口见 [第三方许可](docs/LICENSES.md)。README 的内容组织参考了 [Kazumi](https://github.com/Predidit/Kazumi)，此处仅致谢其文档结构启发。
+感谢 [Tauri](https://github.com/tauri-apps/tauri)、[Vue](https://github.com/vuejs/core)、[Node.js](https://nodejs.org/)、[discord.js](https://github.com/discordjs/discord.js)、[Discord Embedded App SDK](https://github.com/discord/embedded-app-sdk)、[yt-dlp](https://github.com/yt-dlp/yt-dlp) 和 [FFmpeg](https://ffmpeg.org/) 等项目。完整声明入口见 [第三方许可](docs/LICENSES.md)。

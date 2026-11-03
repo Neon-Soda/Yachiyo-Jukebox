@@ -60,7 +60,7 @@ Checks use real WebView2 and Rust with an isolated profile and test credentials,
 - `.local/target/`: Rust and Tauri build intermediates.
 - `dist/`, `bot/activity/dist/`: frontend build output.
 - `stage/`: clean runtime resources for packaging.
-- `releases/`: default final installers and SHA-256 files.
+- `releases/<version>/`: a separate folder for each installer, its SHA-256 checksum, and a `release.json` archive record.
 
 To change the final release directory, create a Git-ignored `.local/host.json` with an absolute `releaseDirectory`. Without it, the project uses its own `releases/`. This path is only an example:
 
@@ -105,3 +105,11 @@ Use [this repository](https://github.com/Neon-Soda/Yachiyo-Jukebox) for issues a
 Keep Chinese and English READMEs, docs, and tool guides in sync. Use relative documentation links and this project's Releases for application downloads. Documentation edits do not require reinstalling a running bot. Run relevant tests for code changes. Never commit `user-data/`, `.local/`, build output, cookies, credentials, or downloaded executables.
 
 Project code and documentation contributions use [MIT](../LICENSE). Preserve licensing and attribution for third-party additions. Keep private deployment notes out of public documentation.
+
+## Release archives
+
+After a successful release audit, `npm run dist` creates a version folder containing the installer, matching `.sha256`, and `release.json` (version, archive time, size, and checksum). Keep earlier versions when publishing a new one.
+
+An identical installer for the same version reuses the existing record. A different installer or incomplete existing archive stops the operation without overwriting it. Increment the version before distributing changed release contents. Files are prepared and verified in a temporary child directory before it is moved into the final version location.
+
+The `releaseDirectory` setting in `.local/host.json` names the archive root; the script creates version subfolders. Do not commit installers or local records to Git. Public distribution still uses this project's GitHub Releases.

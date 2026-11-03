@@ -2,7 +2,7 @@
 
 [简体中文](DOWNLOADS.md) · **English** · [Documentation](README.en.md)
 
-## Yachiyo
+## Yachiyo Jukebox
 
 Installers and release notes are published at **[Neon-Soda/Yachiyo-Jukebox Releases](https://github.com/Neon-Soda/Yachiyo-Jukebox/releases)**.
 
@@ -31,10 +31,10 @@ Node.js is bundled. On first launch, the application guides you through setting 
 | --- | --- | --- |
 | FFmpeg + FFprobe | [Gyan release builds](https://www.gyan.dev/ffmpeg/builds/#release-builds): choose **release essentials ZIP**, extract, and select `bin/ffmpeg.exe` | Windows x64 release ≥ 6.0; `ffprobe.exe` in the same directory must have the same release version |
 | yt-dlp | [yt-dlp Releases](https://github.com/yt-dlp/yt-dlp/releases/latest): choose **`yt-dlp.exe`** | Windows x64, a stable release from 2025 or later with working `--js-runtimes` support |
-| WebView2 | [Microsoft WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/): Evergreen Runtime x64 | If missing, the Yachiyo installer can download its bootstrapper; manual installation from Microsoft is also available |
+| WebView2 | [Microsoft WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/): Evergreen Runtime x64 | If missing, the Yachiyo Jukebox installer can download its bootstrapper; manual installation from Microsoft is also available |
 | OpenSSH Client (SSH mode only) | [Microsoft Windows OpenSSH installation](https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse) | Windows OpenSSH client; other connection modes do not require it |
 
-Keep media tools in a stable local directory. Yachiyo saves an association; it does not copy your selected executables into installer resources or download and update them for you. Revalidate after moving or upgrading files, then restart the bot.
+Keep media tools in a stable local directory. Yachiyo Jukebox saves an association; it does not copy your selected executables into installer resources or download and update them for you. Revalidate after moving or upgrading files, then restart the bot.
 
 Validation executes the selected programs to check format, version, and actual audio capabilities. Download from trusted sources and follow upstream checksum instructions. See the [tool guide](../tools/README.en.md). FFmpeg build-specific GPL / LGPL terms and other tool licenses still apply; see [licensing](LICENSES.en.md).
 

@@ -4,7 +4,7 @@
 
 ## Joining a room
 
-Join a regular server voice channel and use `/jukebox`, or open the configured Yachiyo Activity through Discord's application launcher. The bot plays audio in the voice channel; listeners do not need to open the Activity. Adding a song establishes the required voice connection, so you do not need to summon the bot beforehand.
+Join a regular server voice channel and use `/jukebox`, or open the configured Yachiyo Jukebox Activity through Discord's application launcher. The bot plays audio in the voice channel; listeners do not need to open the Activity. Adding a song establishes the required voice connection, so you do not need to summon the bot beforehand.
 
 Rooms and playlists are isolated by voice channel. One bot can serve only one voice channel at a time within a server; another channel cannot take over an occupied connection. Control requests verify that the user is still in the corresponding voice channel.
 

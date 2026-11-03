@@ -6,7 +6,7 @@ Last updated: 2026-11-03.
 
 ## Software and content
 
-Yachiyo is open-source software for managing your own Discord bot, shared music selection, and playback controls. It does not provide a public music catalog or grant copyright licenses to songs, videos, artwork, trademarks, or user-supplied assets.
+Yachiyo Jukebox is open-source software for managing your own Discord bot, shared music selection, and playback controls. It does not provide a public music catalog or grant copyright licenses to songs, videos, artwork, trademarks, or user-supplied assets.
 
 Users must have the necessary rights to access, play, cache, and share their chosen content, and comply with applicable law, Discord rules, and source-platform terms. Finding, downloading, or playing content in a browser does not establish permission to play it to other people in a voice channel. Software features do not promise or provide a bypass for paid access, regional restrictions, or other access controls.
 
@@ -26,13 +26,13 @@ The application executes media tools selected by the user. Obtain them from trus
 
 ## Warranty and liability
 
-Yachiyo is provided under the [MIT License](../LICENSE) on an “as is” basis without express or implied warranties. Limitations of author and copyright-holder liability are governed by the license text and applicable law. This notice does not exclude rights or liabilities that applicable law does not allow to be excluded.
+Yachiyo Jukebox is provided under the [MIT License](../LICENSE) on an “as is” basis without express or implied warranties. Limitations of author and copyright-holder liability are governed by the license text and applicable law. This notice does not exclude rights or liabilities that applicable law does not allow to be excluded.
 
 This document explains software boundaries and is not a substitute for legal advice. Assess content playback, commercial deployments, and third-party binary redistribution against the facts and rules relevant to your situation.
 
 ## Software license
 
-Yachiyo's own source and documentation use MIT. Subject to preserving the required notices, it permits use, modification, and distribution, including commercial use. This document adds no personal-use-only or noncommercial restriction. Read [LICENSE](../LICENSE) for the full terms and [licensing](LICENSES.en.md) for third-party components.
+Yachiyo Jukebox's own source and documentation use MIT. Subject to preserving the required notices, it permits use, modification, and distribution, including commercial use. This document adds no personal-use-only or noncommercial restriction. Read [LICENSE](../LICENSE) for the full terms and [licensing](LICENSES.en.md) for third-party components.
 
 ## Feedback
 

@@ -1,8 +1,8 @@
-# Yachiyo 文档
+# Yachiyo Jukebox 文档
 
 **简体中文** · [English](README.en.md) · [项目首页](../README.md)
 
-Yachiyo 是使用者自行部署的 Discord 音乐 Bot 与 Activity 点歌台。桌面管理端目前面向 Windows 10 / 11 x64。本组文档对应公开版 1.1.0。
+Yachiyo Jukebox 是使用者自行部署的 Discord 音乐 Bot 与 Activity 点歌台。桌面管理端目前面向 Windows 10 / 11 x64。本组文档对应公开版 1.1.0。
 
 ## 使用者
 

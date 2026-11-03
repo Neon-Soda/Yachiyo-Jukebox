@@ -60,7 +60,7 @@ npm run test:ui
 - `.local/target/`：Rust 与 Tauri 构建中间产物。
 - `dist/`、`bot/activity/dist/`：前端构建产物。
 - `stage/`：打包所需的干净运行资源。
-- `releases/`：默认的最终安装包与 SHA-256 文件。
+- `releases/<版本>/`：每个版本独立保存安装包、SHA-256 校验文件和 `release.json` 归档记录。
 
 如需自定义最终发行目录，可创建被 Git 忽略的 `.local/host.json`，设置绝对路径形式的 `releaseDirectory`。不设置时使用仓库内的 `releases/`。以下路径仅为示例：
 
@@ -105,3 +105,11 @@ npm run test:ui
 保持中文与英文 README、docs 以及工具说明同步，使用相对文档链接，下载入口指向本项目 Releases。修改文档无需重新安装运行中的 Bot。功能变更运行对应的测试；不要提交 `user-data/`、`.local/`、构建产物、Cookie、凭据或下载的可执行文件。
 
 贡献的项目代码与文档沿用 [MIT](../LICENSE)，引用或新增第三方内容时保留其许可与来源。不要把私有部署记录混入公共文档。
+
+## 发行归档
+
+每次 `npm run dist` 在发行审计通过后自动创建版本子目录，保留安装包、同名 `.sha256` 和 `release.json`（版本、归档时间、文件大小与摘要）。发布新版本时保留所有旧版本。
+
+再次归档相同版本且文件一致时复用现有记录；同版本安装包不同或归档不完整时停止，不覆盖旧文件。修改发行内容请递增版本号后重新构建。归档先写入临时子目录，验证完成后再移动到最终版本目录。
+
+`.local/host.json` 中的 `releaseDirectory` 配置的是归档根目录，版本子目录由脚本创建。安装包与本机记录不提交到 Git；对外发行仍通过本项目 GitHub Releases。

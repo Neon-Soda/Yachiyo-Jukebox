@@ -6,7 +6,7 @@ Last updated: 2026-11-03. Covers the functionality described for public version 
 
 ## Scope and operators
 
-Yachiyo is self-hosted software. Each operator supplies their own Discord application, computer, account settings, and network services. Providing source code does not make the project author the operator of every deployment. This document describes the default project code; it does not replace the privacy notice for an operator's additional logs, proxies, or services.
+Yachiyo Jukebox is self-hosted software. Each operator supplies their own Discord application, computer, account settings, and network services. Providing source code does not make the project author the operator of every deployment. This document describes the default project code; it does not replace the privacy notice for an operator's additional logs, proxies, or services.
 
 If you use the jukebox in someone else's Discord server, ask the bot operator or server administrator about data handling, access, and deletion requests. Operators serving other people should identify themselves, provide a contact method, and explain their actual proxy logging and data processing arrangements.
 
