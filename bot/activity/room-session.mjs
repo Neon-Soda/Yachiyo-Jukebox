@@ -2,15 +2,19 @@ import { copy as uiCopy } from '../shared/customization.mjs';
 // Only a confirmed terminal room snapshot may close the Discord Activity.
 // A failed action or a temporary network error must leave the controls open.
 import { readApiResponse } from './api-response.mjs';
-export function createRoomSession({ login, notice, close, fetchImpl = fetch }) {
+export function createRoomSession({ login, renewLogin, notice, close, fetchImpl = fetch }) {
   let session = login.session, timer, exitTimer, polling = false, listener;
   let ending = false, disposed = false;
+  let renewal, lastLoginError, retryAfter = 0;
+  function release(key) {
+    fetchImpl('./api/leave', { method: 'POST', keepalive: true, headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }, body: '{}' }).catch(() => {});
+  }
   function leave() {
     disposed = true;
     clearInterval(timer);
     clearTimeout(exitTimer);
     if (!session) return;
-    fetchImpl('./api/leave', { method: 'POST', keepalive: true, headers: { Authorization: `Bearer ${session}`, 'Content-Type': 'application/json' }, body: '{}' }).catch(() => {});
+    release(session);
     session = null;
   }
   function endIfClosed(state) {
@@ -25,11 +29,35 @@ export function createRoomSession({ login, notice, close, fetchImpl = fetch }) {
       catch { notice(uiCopy("activity.71167409585a", "点歌台已结束，请手动关闭 Activity。")); }
     }, 900);
   }
-  const request = async (path, body) => {
-    const r = await fetchImpl(`./api/${path}`, { method: body ? 'POST' : 'GET', headers: { Authorization: `Bearer ${session}`, ...(body ? { 'Content-Type': 'application/json' } : {}) }, ...(body ? { body: JSON.stringify(body) } : {}) });
-    if (r.status === 410 || r.status === 401) clearInterval(timer);
-    return readApiResponse(r);
-  };
+  async function renew() {
+    try {
+      const next = await renewLogin(login.state.id);
+      if (disposed || ending) release(next.session);
+      else session = next.session;
+    } catch (error) {
+      if (error.status === 410) endIfClosed({ closed: true });
+      lastLoginError = error;
+      retryAfter = Date.now() + 15000;
+      throw error;
+    } finally { renewal = null; }
+  }
+  async function request(path, body) {
+    const send = key => fetchImpl(`./api/${path}`, { method: body ? 'POST' : 'GET', headers: { Authorization: `Bearer ${key}`, ...(body ? { 'Content-Type': 'application/json' } : {}) }, ...(body ? { body: JSON.stringify(body) } : {}) }).then(readApiResponse);
+    const key = session;
+    try { return await send(key); }
+    catch (error) {
+      // The API rejects an expired key before dispatching a command. Only that
+      // rejection is safe to retry for operations such as adding or skipping.
+      if (error.status !== 401 || error.code !== 'SESSION_EXPIRED' || !renewLogin || disposed || ending) throw error;
+      if (key === session) {
+        if (Date.now() < retryAfter) throw lastLoginError;
+        renewal ??= renew();
+        await renewal;
+      }
+      if (disposed || ending) throw new Error(uiCopy("activity.2118db23c089", "点歌台已结束，请重新打开。"));
+      return send(session);
+    }
+  }
   return {
     subscribe(fn) {
       if (disposed) return;

@@ -30,3 +30,29 @@ test('Activity API authenticates, rechecks membership, rejects cross-origin writ
   await request('/api/leave', {}, headers);
   assert.equal((await fetch(base + '/api/state', { headers })).status, 401);
 });
+
+test('verified activity extends the idle deadline but never the Discord token lifetime', async t => {
+  t.mock.timers.enable({ apis: ['Date'], now: 1000000 });
+  const hour = 3600000;
+  let allowed = true;
+  const room = { snapshot: () => ({ id: 'room', tracks: ['song'] }) };
+  const { server } = createActivityServer({ clientId: '123', directory: '.',
+    authenticate: async () => ({ room, expiresIn: 7200 }),
+    authorize: async () => { if (!allowed) throw new UserFacingError('differentVoice'); },
+  });
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise(resolve => { server.closeAllConnections(); server.close(resolve); }));
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const login = async () => (await (await fetch(base + '/api/auth', { method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: 'https://123.discordsays.com' }, body: '{}' })).json()).session;
+  const state = key => fetch(base + '/api/state', { headers: { Authorization: `Bearer ${key}` } });
+  const active = await login(), idle = await login();
+  t.mock.timers.tick(hour - 1000);
+  assert.equal((await state(active)).status, 200);
+  allowed = false; assert.equal((await state(idle)).status, 400); allowed = true;
+  t.mock.timers.tick(2000);
+  assert.deepEqual(await (await state(active)).json(), room.snapshot());
+  assert.equal((await (await state(idle)).json()).code, 'SESSION_EXPIRED');
+  t.mock.timers.tick(hour - 1000);
+  assert.equal((await state(active)).status, 401);
+});

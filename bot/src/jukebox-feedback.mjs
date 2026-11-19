@@ -1,12 +1,12 @@
 import { userError } from './messages.mjs';
 
 export function sendPlaybackChat(room, content) {
-  if (room.instanceId) return;
+  if (room.participants) return;
   return room.textChannel?.send({ content, allowedMentions: { parse: [] } }).catch(() => {});
 }
 
 export async function finishCommandReply(interaction, room, content, error = null) {
-  if (room?.instanceId) {
+  if (room?.participants) {
     if (error && !room.closed) {
       room.recordOperation(userError(error), interaction.user.globalName || interaction.user.username || '一位伙伴', 'error');
     }

@@ -54,8 +54,8 @@ Other room members can also add, pause, and switch tracks. The feed helps people
 
 ## When a room ends
 
-- A room does not end merely because playback is idle while someone continues using the Activity.
-- Once the last participant is confirmed to have left, the room cleanup flow releases the playlist. A temporary network lookup failure does not prove everyone has left.
+- The jukebox renews your session while you are in the same voice channel and Activity. After sleep or session expiry, the page verifies your membership again and reconnects to the room if it is still running.
+- As long as someone stays in voice, closing the last Activity window keeps the playlist. Reopen the jukebox in the same channel to control the same bot at the current playback position.
 - End jukebox closes the whole shared room and attempts to close the Activity through the Discord SDK. Close it manually if the client stays open.
 - If the voice channel is empty for 60 seconds, the room ends and the bot leaves voice.
 - With `/play` only, the bot leaves after the configured idle timeout, which defaults to five minutes.

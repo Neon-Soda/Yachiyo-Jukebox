@@ -53,8 +53,8 @@ export function createDiscordAuth({ applicationId, clientSecret, botToken, guild
       const channel = await channelForUser(user.id);
       if (channel.id !== body.channelId) throw new UserFacingError('differentVoice');
       const instance = validateActivityInstance(await getInstance(body.instanceId, true), { applicationId, guildId, channelId: channel.id, instanceId: body.instanceId, userId: user.id });
-      const room = roomFor(channel, body.instanceId);
-      room.participants = instance.users.length;
+      const room = roomFor(channel, body.resumeRoomId);
+      room.attachActivity(instance);
       return { userId: user.id, displayName: user.global_name || user.username || uiCopy("room.c87feea9ea18", "一位伙伴"), instanceId: body.instanceId, room, accessToken: token.access_token, expiresIn: token.expires_in };
     },
   };

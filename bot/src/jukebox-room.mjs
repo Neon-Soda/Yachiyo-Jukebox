@@ -7,6 +7,20 @@ import { expandMediaCollection, MAX_QUEUE_TRACKS } from './media-collections.mjs
 import { collectionSingleChoice } from './collection-choice.mjs';
 
 export const playModes = ['sequence', 'repeat-all', 'repeat-one', 'shuffle'];
+export function createChannelRooms(createRoom) {
+  const rooms = new Map();
+  function roomFor(channel, resumeRoomId) {
+    const existing = rooms.get(channel.id);
+    if (resumeRoomId !== undefined && existing?.id !== resumeRoomId) throw new UserFacingError('roomClosed');
+    if (existing) return existing;
+    const room = createRoom(channel);
+    rooms.set(channel.id, room);
+    room.once('closed', () => rooms.delete(channel.id));
+    return room;
+  }
+  return { rooms, roomFor };
+}
+
 const playbackStages = {
   'cache-timeout': uiCopy("room.186cae5cd6f9", "音频准备超过等待时间，请重试"),
   'cache-download': uiCopy("room.f0f12b34054a", "音频下载失败，请重试"),
@@ -26,12 +40,28 @@ export class JukeboxRoom extends EventEmitter {
     this.mode = 'sequence'; this.status = 'idle'; this.error = null;
     this.history = []; this.shuffleBag = []; this.failed = new Set();
     this.generation = 0; this.addGeneration = 0; this.revision = 0;
-    this.busy = false; this.closed = false; this.participants = 0;
+    this.busy = false; this.closed = false; this.activityInstances = null;
     this.events = []; this.eventSequence = 0;
     audio.on('end', () => { if (!this.closed && this.status === 'playing') this.next(true); });
     audio.on('failure', error => this.playbackFailed(this.generation, error));
   }
   get current() { return this.tracks.find(t => t.id === this.currentId); }
+  attachActivity(instance) {
+    this.activityInstances ??= new Map();
+    this.activityInstances.set(instance.instance_id, instance.users);
+  }
+  get participants() {
+    return this.activityInstances ? new Set([...this.activityInstances.values()].flat()).size : 0;
+  }
+  async refreshParticipants(getInstance) {
+    for (const [id, previousUsers] of [...(this.activityInstances ?? [])]) {
+      const instance = await getInstance(id, true);
+      // A login may have refreshed this instance while Discord was responding.
+      if (this.closed || this.activityInstances.get(id) !== previousUsers) continue;
+      if (instance?.users?.length) this.activityInstances.set(id, instance.users);
+      else this.activityInstances.delete(id);
+    }
+  }
   changed() { this.revision++; this.emit('change', this.snapshot()); }
   snapshot() {
     return {

@@ -10,6 +10,11 @@ export async function readApiResponse(response) {
   let data;
   try { data = await response.json(); } catch { throw new Error(fallback); }
   if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error(fallback);
-  if (!response.ok) throw new Error(typeof data.error === 'string' ? data.error.slice(0, 300) : fallback);
+  if (!response.ok) {
+    const error = new Error(typeof data.error === 'string' ? data.error.slice(0, 300) : fallback);
+    error.status = response.status;
+    error.code = data.code;
+    throw error;
+  }
   return data;
 }

@@ -2,7 +2,7 @@
 
 [简体中文](PRIVACY.md) · **English** · [Documentation](README.en.md)
 
-Last updated: 2026-11-03. Covers the functionality described for public version 1.1.0 of this repository.
+Last updated: 2026-11-19. Covers the functionality described for public version 1.1.1 of this repository.
 
 ## Scope and operators
 
@@ -48,7 +48,7 @@ Theme exports exclude account credentials, but text and images you supply may co
 
 - **Settings, themes, and credentials:** retained until changed or removed. Upgrades and uninstallation preserve `user-data/` by default.
 - **Room playlists and events:** released when the room ends, rather than saved as persistent listening history. Stopping the bot releases process memory.
-- **Sessions:** held in memory and released on leaving, expiry, or service shutdown. Expired sessions are periodically cleaned up.
+- **Sessions:** held in memory and released on leaving, expiry, or service shutdown. The jukebox renews sessions after verifying voice channel and Activity membership. The service periodically clears expired sessions.
 - **Audio cache:** defaults to a 1024 MiB limit, evicts according to recent use, and protects files in use. Ending a room does not empty the cache. There is no rule deleting everything after 24 hours. Stop the bot to clear it in the application.
 - **Diagnostic exports, exported themes, and backups:** remain where you saved them until you remove them.
 - **Proxy, Discord, and source-platform records:** retention is not centrally controlled by this project; ask the respective operator.

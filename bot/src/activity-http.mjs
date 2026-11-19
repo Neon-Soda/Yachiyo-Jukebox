@@ -7,6 +7,7 @@ import { randomBytes } from 'node:crypto';
 import { userError, UserFacingError } from './messages.mjs';
 
 const files = { '/': ['index.html', 'text/html'], '/index.html': ['index.html', 'text/html'], '/style.css': ['style.css', 'text/css'], '/app.js': ['app.js', 'text/javascript'], '/notifications.js': ['notifications.js', 'text/javascript'], '/connect.js': ['connect.js', 'text/javascript'], '/preview.js': ['preview.js', 'text/javascript'], '/search-options.js': ['search-options.js', 'text/javascript'] };
+const sessionIdleMs = 60 * 60 * 1000;
 export function json(response, status, body) {
   response.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
   response.end(JSON.stringify(body));
@@ -60,16 +61,19 @@ export function createActivityServer({ clientId, directory, publicOrigin, authen
         if (++attempts.count > 30 || sessions.size >= 500) return json(response, 429, { error: uiCopy("room.167b0d7caba3", "请求有些频繁，请稍后再试。") });
         const result = await authenticate(await readBody(request));
         const session = randomBytes(32).toString('base64url');
-        sessions.set(session, { ...result, accessToken: undefined, lastSeen: Date.now(), expires: Date.now() + Math.min(result.expiresIn ?? 3600, 3600) * 1000, actions: [] });
+        const now = Date.now();
+        const tokenExpires = now + (result.expiresIn ?? 3600) * 1000;
+        sessions.set(session, { ...result, accessToken: undefined, lastSeen: now, tokenExpires, expires: Math.min(now + sessionIdleMs, tokenExpires), actions: [] });
         return json(response, 200, { session, accessToken: result.accessToken, state: result.room.snapshot() });
       }
       const key = request.headers.authorization?.replace(/^Bearer /, '');
       const session = key && sessions.get(key);
-      if (!session || session.expires <= Date.now()) return json(response, 401, { error: uiCopy("room.271e65699350", "会话已过期，请重新打开点歌台。") });
+      if (!session || session.expires <= Date.now()) return json(response, 401, { code: 'SESSION_EXPIRED', error: uiCopy("room.271e65699350", "会话已过期，请重新打开点歌台。") });
       if (request.method === 'POST' && path === '/api/leave') { sessions.delete(key); return json(response, 200, { ok: true }); }
       if (session.room.closed) return json(response, 200, session.room.snapshot());
       await authorize(session);
       session.lastSeen = Date.now();
+      session.expires = Math.min(session.lastSeen + sessionIdleMs, session.tokenExpires);
       if (request.method === 'GET' && path === '/api/state') return json(response, 200, session.room.snapshot());
       if (request.method === 'POST' && path === '/api/prepare-add') {
         session.linkChecks = (session.linkChecks ?? []).filter(time => time > Date.now() - 60000);
@@ -108,7 +112,7 @@ export function createActivityServer({ clientId, directory, publicOrigin, authen
       return json(response, 404, { error: uiCopy("room.fafdc4f42b6c", "操作不存在。") });
     } catch (error) {
       // Never expose upstream OAuth, Cookie, media URL or arbitrary error text.
-      if (!response.headersSent) json(response, 400, { error: userError(error) });
+      if (!response.headersSent) json(response, error instanceof UserFacingError && error.key === 'roomClosed' ? 410 : 400, { error: userError(error) });
       else response.end();
     }
   });

@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { EventEmitter } from 'node:events';
-import { JukeboxRoom } from '../src/jukebox-room.mjs';
-import { validateActivityInstance } from '../src/activity-auth.mjs';
+import { createChannelRooms, JukeboxRoom } from '../src/jukebox-room.mjs';
+import { createDiscordAuth, validateActivityInstance } from '../src/activity-auth.mjs';
 import { createRoomActionHandler } from '../src/jukebox-actions.mjs';
 
 class Audio extends EventEmitter {
@@ -18,6 +18,58 @@ function room(channelId = 'a', options = {}) {
 }
 async function songs(r, count = 3) { for (let i = 0; i < count; i++) await r.add(`https://youtu.be/video${i}`); }
 const tick = () => new Promise(resolve => setImmediate(resolve));
+
+test('closing and relaunching in voice reattaches a new validated instance to the playing room', async () => {
+  const channel = { id: '123456789012345678' }, guildId = 'guild';
+  let voiceChannel = channel;
+  const instances = new Map();
+  const { rooms, roomFor } = createChannelRooms(channel => room(channel.id));
+  const auth = createDiscordAuth({ applicationId: 'app', guildId, roomFor, channelForUser: async () => voiceChannel,
+    fetchImpl: async url => {
+      if (url.endsWith('oauth2/token')) return Response.json({ access_token: 'test', expires_in: 7200 });
+      if (url.endsWith('users/@me')) return Response.json({ id: 'listener' });
+      const id = url.split('/').at(-1), users = instances.get(id);
+      return users ? Response.json({ application_id: 'app', instance_id: id, users, location: { guild_id: guildId, channel_id: channel.id } })
+        : new Response(null, { status: 404 });
+    },
+  });
+  const login = (instanceId, resumeRoomId) => auth.authenticate({ guildId, channelId: channel.id, instanceId, code: 'test', resumeRoomId });
+  instances.set('old', ['listener']);
+  const first = await login('old'), original = first.room;
+  await songs(original); await original.play(); original.audio.at = 47;
+  original.setMode('repeat-all'); const before = original.snapshot();
+  instances.clear();
+  await original.refreshParticipants(auth.getInstance);
+  assert.equal(original.participants, 0); assert.equal(original.closed, false);
+  await assert.rejects(auth.authorize(first), e => e.key === 'activityRequired');
+  instances.set('new', ['listener']);
+  const reopened = await login('new');
+  assert.equal(reopened.room, original); assert.equal((await login('new', original.id)).room, original);
+  const after = reopened.room.snapshot();
+  for (const key of ['id', 'currentId', 'position', 'tracks', 'mode', 'status']) assert.deepEqual(after[key], before[key]);
+  assert.equal(original.audio.starts.length, 1);
+  voiceChannel = { id: '987654321098765432' };
+  await assert.rejects(auth.authorize(reopened), e => e.key === 'differentVoice');
+  await assert.rejects(login('new'), e => e.key === 'differentVoice');
+  assert.notEqual(roomFor(voiceChannel), original);
+  voiceChannel = channel; original.close();
+  await assert.rejects(login('new', original.id), e => e.key === 'roomClosed');
+  assert.equal(rooms.has(channel.id), false);
+  const replacement = (await login('new')).room;
+  await assert.rejects(login('new', original.id), e => e.key === 'roomClosed');
+  assert.notEqual(replacement.id, original.id);
+});
+
+test('a late participant check cannot remove a reattached instance or double count overlapping users', async () => {
+  const r = room();
+  r.attachActivity({ instance_id: 'one', users: ['a'] });
+  let finishCheck;
+  const checking = r.refreshParticipants(() => new Promise(resolve => { finishCheck = resolve; }));
+  r.attachActivity({ instance_id: 'one', users: ['a', 'b'] });
+  r.attachActivity({ instance_id: 'two', users: ['b', 'c'] });
+  finishCheck(null); await checking;
+  assert.equal(r.participants, 3); assert.equal(r.closed, false);
+});
 
 async function finishPlaylist(r) {
   await r.play();

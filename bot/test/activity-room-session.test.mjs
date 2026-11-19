@@ -18,6 +18,68 @@ function fixture(t, respond) {
   return { service, requests, notices, closes };
 }
 const settle = () => new Promise(resolve => setImmediate(resolve));
+const expired = () => Response.json({ code: 'SESSION_EXPIRED' }, { status: 401 });
+
+test('a poll and a skip after sleep share one login and execute the skip once in the same room', async t => {
+  t.mock.timers.enable({ apis: ['setInterval'] });
+  const logins = [], commands = [], states = [];
+  let finishLogin;
+  const service = createRoomSession({ login: { session: 'old', state: { id: 'room' } },
+    renewLogin: id => { logins.push(id); return new Promise(resolve => { finishLogin = resolve; }); },
+    notice() {}, close: () => assert.fail('must stay open'),
+    fetchImpl: async (path, options) => {
+      if (options.headers.Authorization === 'Bearer old') return expired();
+      assert.equal(options.headers.Authorization, 'Bearer new');
+      if (path === './api/action') commands.push(JSON.parse(options.body));
+      return Response.json({ id: 'room', tracks: ['song'] });
+    },
+  });
+  t.after(() => service.leave());
+  service.subscribe(state => states.push(state));
+  t.mock.timers.tick(1500);
+  const action = service.action('next');
+  await settle();
+  assert.deepEqual(logins, ['room']);
+  finishLogin({ session: 'new' });
+  await action; await settle();
+  assert.deepEqual(commands, [{ type: 'next' }]);
+  assert.deepEqual(states.at(-1).tracks, ['song']);
+  t.mock.timers.tick(1500); await settle();
+  assert.equal(states.length, 3);
+});
+
+test('failed renewal backs off, then polling recovers without reopening the Activity', async t => {
+  t.mock.timers.enable({ apis: ['setInterval', 'Date'], now: 1000 });
+  let attempts = 0;
+  const service = createRoomSession({ login: { session: 'old', state: { id: 'room' } },
+    renewLogin: async () => { if (++attempts === 1) throw new Error('offline'); return { session: 'new' }; },
+    notice() {}, close: () => assert.fail('must stay open'),
+    fetchImpl: async (path, options) => options.headers.Authorization === 'Bearer old' ? expired() : Response.json({ id: 'room', tracks: ['song'] }),
+  });
+  t.after(() => service.leave());
+  const states = []; service.subscribe(state => states.push(state));
+  t.mock.timers.tick(1500); await settle();
+  t.mock.timers.tick(1500); await settle(); assert.equal(attempts, 1);
+  t.mock.timers.tick(15000); await settle();
+  assert.equal(attempts, 2); assert.deepEqual(states.at(-1).tracks, ['song']);
+});
+
+test('leaving during reauthentication releases the fresh session and discards the pending action', async () => {
+  let finishLogin;
+  const released = [];
+  const service = createRoomSession({ login: { session: 'old', state: { id: 'room' } },
+    renewLogin: () => new Promise(resolve => { finishLogin = resolve; }),
+    notice() {}, close() {},
+    fetchImpl: async (path, options) => {
+      if (path === './api/leave') { released.push(options.headers.Authorization); return Response.json({ ok: true }); }
+      assert.equal(options.headers.Authorization, 'Bearer old'); return expired();
+    },
+  });
+  const action = service.action('end'); await settle();
+  service.leave(); finishLogin({ session: 'new' });
+  await assert.rejects(action, /已结束/);
+  assert.deepEqual(released, ['Bearer old', 'Bearer new']);
+});
 
 test('search returns private results without rendering them as a room snapshot or closing the Activity', async t => {
   const result = { results: [{ title: '歌曲' }], warnings: [] };

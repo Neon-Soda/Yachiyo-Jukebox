@@ -32,7 +32,7 @@ export const state = reactive({
   busy: false,
   preferenceSaving: false,
   page: "overview",
-  version: "1.1.0",
+  version: "1.1.1",
   pending: false,
   showKey: false,
   tools: { ready: false, items: [] } as ToolsStatus,

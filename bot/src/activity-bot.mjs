@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { existsSync } from 'node:fs';
 import { AudioCache } from './audio-cache.mjs';
 import { JukeboxAudio } from './jukebox-audio.mjs';
-import { JukeboxRoom } from './jukebox-room.mjs';
+import { createChannelRooms, JukeboxRoom } from './jukebox-room.mjs';
 import { createActivityServer } from './activity-http.mjs';
 import { createDiscordAuth } from './activity-auth.mjs';
 import { messages, userError, UserFacingError } from './messages.mjs';
@@ -22,7 +22,7 @@ if (!DISCORD_TOKEN || !/^\d{17,20}$/.test(GUILD_ID ?? '') || !DISCORD_CLIENT_SEC
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] });
 const configuredMb = Number(process.env.AUDIO_CACHE_MB ?? 1024);
 const cache = new AudioCache({ maxBytes: (Number.isFinite(configuredMb) && configuredMb >= 256 && configuredMb <= 10240 ? configuredMb : 1024) * 1024 ** 2 });
-const rooms = new Map();
+const { rooms, roomFor } = createChannelRooms(createRoom);
 attachDesktopStatus(client, () => ({ rooms: rooms.size, localReady: Boolean(serverHandle?.server.listening) }));
 const musicSearch = createMusicSearch();
 let connection, activeRoom, serverHandle, auth, checking = false;
@@ -34,21 +34,14 @@ async function channelForUser(userId) {
   if (!channel || channel.type !== 2) throw new UserFacingError('joinVoice');
   return channel;
 }
-function roomFor(channel, instanceId = null) {
-  let room = rooms.get(channel.id);
-  if (room?.instanceId && instanceId && room.instanceId !== instanceId) throw new UserFacingError('roomOccupied');
-  if (!room) {
-    room = new JukeboxRoom({ channelId: channel.id, channelName: channel.name, audio: new JukeboxAudio(cache), coverFor: musicSearch.registerCover });
-    room.lifecycle = createRoomLifecycle({ idleMinutes: idleMinutes(process.env.IDLE_TIMEOUT_MINUTES) });
-    room.on('closed', () => {
-      if (activeRoom === room) { const old = connection; connection = null; activeRoom = null; old?.destroy(); }
-      if (rooms.get(channel.id) === room) rooms.delete(channel.id);
-    });
-    room.on('playing', track => sendPlaybackChat(room, messages.nowPlaying(track.title)));
-    room.on('playbackFailure', () => sendPlaybackChat(room, messages.playbackInterrupted(room.tracks.length > 1)));
-    rooms.set(channel.id, room);
-  }
-  if (instanceId) room.instanceId = instanceId;
+function createRoom(channel) {
+  const room = new JukeboxRoom({ channelId: channel.id, channelName: channel.name, audio: new JukeboxAudio(cache), coverFor: musicSearch.registerCover });
+  room.lifecycle = createRoomLifecycle({ idleMinutes: idleMinutes(process.env.IDLE_TIMEOUT_MINUTES) });
+  room.on('closed', () => {
+    if (activeRoom === room) { const old = connection; connection = null; activeRoom = null; old?.destroy(); }
+  });
+  room.on('playing', track => sendPlaybackChat(room, messages.nowPlaying(track.title)));
+  room.on('playbackFailure', () => sendPlaybackChat(room, messages.playbackInterrupted(room.tracks.length > 1)));
   return room;
 }
 async function ensureVoice(room, userId) {
@@ -129,11 +122,9 @@ setInterval(async () => {
   checking = true;
   try {
     for (const room of [...rooms.values()]) {
-      if (!room.instanceId) continue;
+      if (!room.activityInstances?.size) continue;
       try {
-        const instance = await auth.getInstance(room.instanceId, true);
-        if (!instance || !instance.users?.length) { room.close(); continue; }
-        room.participants = instance.users.length;
+        await room.refreshParticipants(auth.getInstance);
       } catch {
         // A failed API request cannot prove the last participant left.
         // Keep the room; explicit end and the empty voice channel timer remain.
@@ -142,13 +133,18 @@ setInterval(async () => {
   } finally { checking = false; }
 }, 15000).unref();
 setInterval(() => {
-  if (!connection || !activeRoom) return;
-  const channel = client.guilds.cache.get(GUILD_ID)?.channels.cache.get(activeRoom.channelId);
-  const outcome = activeRoom.lifecycle.check(activeRoom, { connected: true, hasListeners: Boolean(channel?.members.some(member => !member.user.bot)) });
-  if (outcome === 'end') activeRoom.close();
-  else if (outcome === 'disconnect') {
-    activeRoom.lifecycle.reset();
-    const old = connection; connection = null; activeRoom = null; old.destroy();
+  const guild = client.guilds.cache.get(GUILD_ID);
+  if (!client.isReady() || !guild?.available) return;
+  for (const room of rooms.values()) {
+    const connected = room === activeRoom && Boolean(connection);
+    if (!connected && !room.activityInstances) continue;
+    const channel = guild.channels.cache.get(room.channelId);
+    const outcome = room.lifecycle.check(room, { connected, hasListeners: Boolean(channel?.members.some(member => !member.user.bot)) });
+    if (outcome === 'end') room.close();
+    else if (outcome === 'disconnect') {
+      room.lifecycle.reset();
+      const old = connection; connection = null; activeRoom = null; old.destroy();
+    }
   }
 }, 1000).unref();
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => {
