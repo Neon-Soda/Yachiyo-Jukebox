@@ -33,6 +33,8 @@ test('Bilibili retries transient empty formats and reuses metadata privately for
   assert.equal(mock.calls, 2);
   const prepared = await prepareDownload(track, { inspectTrack: () => assert.fail('fresh metadata must not be extracted again') });
   assert.equal(prepared.input, metadata);
+  const chunkOption = prepared.args.indexOf('--http-chunk-size');
+  assert.deepEqual(prepared.args.slice(chunkOption, chunkOption + 2), ['--http-chunk-size', '4M']);
   assert.deepEqual(prepared.args.slice(-2), ['--load-info-json', '-']);
   assert.ok(!prepared.args.includes(track.url));
   assert.ok(!JSON.stringify(track).includes('signature'));
@@ -118,6 +120,7 @@ test('YouTube and NetEase retain their URL-based download path', async () => {
   for (const track of [parseLink('https://youtu.be/test'), parseLink('https://music.163.com/song?id=123')]) {
     const prepared = await prepareDownload(track);
     assert.equal(prepared.input, undefined);
+    assert.ok(!prepared.args.includes('--http-chunk-size'));
     assert.deepEqual(prepared.args.slice(-2), ['--', track.url]);
   }
 });
@@ -135,6 +138,7 @@ test('public Bilibili metadata retains only valid, distinct and bounded CDN back
     const prepared = await prepareDownload(track);
     const alternatives = await prepareDownloadAlternatives(track, prepared, { fallback: () => assert.fail('known backups require no new extraction') });
     assert.equal(alternatives.length, 2); assert.equal(JSON.parse(alternatives[0].input).formats[0].url, audio[field][1]);
+    for (const alternative of alternatives) assert.deepEqual(alternative.args, prepared.args);
     assert.equal(JSON.parse(alternatives[0].input).duration, 200);
     assert.equal(JSON.stringify(track).includes('signature'), false);
     assert.equal(alternatives.some(item => item.args.join(' ').includes('signature')), false);

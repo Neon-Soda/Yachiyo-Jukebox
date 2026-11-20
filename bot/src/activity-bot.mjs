@@ -46,6 +46,7 @@ function createRoom(channel) {
 }
 async function ensureVoice(room, userId) {
   const channel = await channelForUser(userId);
+  room.assertOpen();
   if (channel.id !== room.channelId) throw new UserFacingError('differentVoice');
   if (activeRoom && activeRoom !== room) throw new UserFacingError('roomOccupied');
   const permissions = channel.permissionsFor(channel.guild.members.me);

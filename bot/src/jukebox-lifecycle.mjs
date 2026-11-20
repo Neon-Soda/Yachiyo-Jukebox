@@ -11,7 +11,7 @@ export function createRoomLifecycle({ idleMinutes = 5, clock = () => performance
         emptySince ??= now;
         if (now - emptySince >= 60000) return 'end';
       }
-      // Keep Activity playlists for voice listeners, even with all windows closed.
+      // Activity rooms use Discord participation for cleanup instead of playback inactivity.
       if (room.activityInstances || !room.startedByPlay || room.status !== 'idle' || room.busy || !idleMinutes) {
         idleSince = undefined;
         return null;

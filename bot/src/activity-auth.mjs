@@ -33,6 +33,7 @@ export function createDiscordAuth({ applicationId, clientSecret, botToken, guild
     if (response.status === 404) { instances.delete(instanceId); return null; }
     if (!response.ok) throw authFailure(`instance-api-${response.status}`);
     const data = await response.json();
+    if (data?.instance_id !== instanceId || data.application_id !== applicationId || !Array.isArray(data.users)) throw authFailure('instance-response');
     instances.set(instanceId, { until: Date.now() + 10000, data });
     if (instances.size > 100) for (const [key, value] of instances) if (value.until < Date.now()) instances.delete(key);
     return data;

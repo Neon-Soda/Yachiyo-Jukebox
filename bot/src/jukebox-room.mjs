@@ -54,13 +54,15 @@ export class JukeboxRoom extends EventEmitter {
     return this.activityInstances ? new Set([...this.activityInstances.values()].flat()).size : 0;
   }
   async refreshParticipants(getInstance) {
-    for (const [id, previousUsers] of [...(this.activityInstances ?? [])]) {
+    if (this.closed || !this.activityInstances?.size) return;
+    for (const [id, previousUsers] of [...this.activityInstances]) {
       const instance = await getInstance(id, true);
       // A login may have refreshed this instance while Discord was responding.
       if (this.closed || this.activityInstances.get(id) !== previousUsers) continue;
       if (instance?.users?.length) this.activityInstances.set(id, instance.users);
       else this.activityInstances.delete(id);
     }
+    if (this.activityInstances.size === 0) this.close();
   }
   changed() { this.revision++; this.emit('change', this.snapshot()); }
   snapshot() {

@@ -19,7 +19,7 @@ function room(channelId = 'a', options = {}) {
 async function songs(r, count = 3) { for (let i = 0; i < count; i++) await r.add(`https://youtu.be/video${i}`); }
 const tick = () => new Promise(resolve => setImmediate(resolve));
 
-test('closing and relaunching in voice reattaches a new validated instance to the playing room', async () => {
+test('relaunching before the last participant check reattaches to the playing room', async () => {
   const channel = { id: '123456789012345678' }, guildId = 'guild';
   let voiceChannel = channel;
   const instances = new Map();
@@ -39,11 +39,11 @@ test('closing and relaunching in voice reattaches a new validated instance to th
   await songs(original); await original.play(); original.audio.at = 47;
   original.setMode('repeat-all'); const before = original.snapshot();
   instances.clear();
-  await original.refreshParticipants(auth.getInstance);
-  assert.equal(original.participants, 0); assert.equal(original.closed, false);
-  await assert.rejects(auth.authorize(first), e => e.key === 'activityRequired');
   instances.set('new', ['listener']);
   const reopened = await login('new');
+  await original.refreshParticipants(auth.getInstance);
+  assert.equal(original.participants, 1); assert.equal(original.closed, false);
+  await assert.rejects(auth.authorize(first), e => e.key === 'activityRequired');
   assert.equal(reopened.room, original); assert.equal((await login('new', original.id)).room, original);
   const after = reopened.room.snapshot();
   for (const key of ['id', 'currentId', 'position', 'tracks', 'mode', 'status']) assert.deepEqual(after[key], before[key]);
@@ -69,6 +69,45 @@ test('a late participant check cannot remove a reattached instance or double cou
   r.attachActivity({ instance_id: 'two', users: ['b', 'c'] });
   finishCheck(null); await checking;
   assert.equal(r.participants, 3); assert.equal(r.closed, false);
+});
+
+test('the last Activity participant leaving ends playback, clears the queue and releases the channel', async () => {
+  for (const lastInstance of [null, { users: [] }]) {
+    const channel = { id: 'voice' };
+    const { rooms, roomFor } = createChannelRooms(channel => room(channel.id));
+    const r = roomFor(channel);
+    await songs(r); await r.play(); r.audio.at = 37;
+    r.attachActivity({ instance_id: 'first', users: ['a'] });
+    r.attachActivity({ instance_id: 'second', users: ['b', 'c'] });
+    await r.refreshParticipants(async id => id === 'first' ? null : { users: ['c'] });
+    assert.equal(r.participants, 1); assert.equal(r.status, 'playing'); assert.equal(r.audio.at, 37);
+    await r.refreshParticipants(async () => lastInstance);
+    assert.equal(r.closed, true); assert.equal(r.tracks.length, 0); assert.equal(r.currentId, null);
+    assert.equal(r.audio.at, 0); assert.equal(rooms.has(channel.id), false);
+    assert.notEqual(roomFor(channel).id, r.id);
+  }
+});
+
+test('unknown Discord participation keeps the room until the next confirmed empty result', async () => {
+  const r = room();
+  let response;
+  const auth = createDiscordAuth({ applicationId: 'app', fetchImpl: async () => response });
+  r.attachActivity({ instance_id: 'one', users: ['a'] });
+  for (response of [new Response(null, { status: 503 }), Response.json(null),
+    Response.json({ application_id: 'app', instance_id: 'one' }),
+    Response.json({ application_id: 'app', instance_id: 'other', users: [] })]) {
+    await assert.rejects(r.refreshParticipants(auth.getInstance));
+    assert.equal(r.closed, false); assert.equal(r.participants, 1);
+  }
+  response = new Response(null, { status: 404 });
+  await r.refreshParticipants(auth.getInstance);
+  assert.equal(r.closed, true);
+});
+
+test('participant checks leave a command-only room running', async () => {
+  const r = room(); await songs(r, 1); await r.play();
+  await r.refreshParticipants(() => assert.fail('No Activity instance to check'));
+  assert.equal(r.closed, false); assert.equal(r.status, 'playing');
 });
 
 async function finishPlaylist(r) {

@@ -29,6 +29,8 @@ export function parseLink(input) {
 
 export function argsFor(track) {
   const args = [...ffmpegLocationArgs(), '--ignore-config', '--no-playlist', '--no-warnings', '--socket-timeout', '20', '--retries', '2', '--js-runtimes', 'node', '-f', 'bestaudio/best'];
+  // Some Bilibili DASH servers serve audio in byte ranges and reject full-file requests.
+  if (track.platform === 'BILIBILI') args.push('--http-chunk-size', '4M');
   const cookie = process.env[`${track.platform}_COOKIES`];
   if (cookie) args.push('--cookies', cookie);
   return args;
