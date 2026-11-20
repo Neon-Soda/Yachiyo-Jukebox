@@ -1,10 +1,9 @@
-import { AudioCache, NextTrackPreload } from './audio-cache.mjs';
-import { mediaTool } from './media-tools.mjs';
+import { AudioCache } from './audio-cache.mjs';
+import { JukeboxAudio } from './jukebox-audio.mjs';
 import { attachDesktopStatus } from './desktop-status.mjs';
-import { spawn } from 'node:child_process';
 import { Client, GatewayIntentBits, SlashCommandBuilder, PermissionFlagsBits, MessageFlags } from 'discord.js';
-import { createAudioPlayer, createAudioResource, joinVoiceChannel, entersState, AudioPlayerStatus, VoiceConnectionStatus, StreamType, NoSubscriberBehavior } from '@discordjs/voice';
-import { parseLink, inspect, prepareDownload } from './media.mjs';
+import { joinVoiceChannel, entersState, AudioPlayerStatus, VoiceConnectionStatus } from '@discordjs/voice';
+import { parseLink, inspect } from './media.mjs';
 import { messages, UserFacingError, userError } from './messages.mjs';
 import { createIdleTimeout, idleMinutes } from './idle-timeout.mjs';
 
@@ -12,76 +11,52 @@ const { DISCORD_TOKEN, GUILD_ID } = process.env;
 if (!DISCORD_TOKEN || !/^\d{17,20}$/.test(GUILD_ID || '')) throw new Error(messages.runtime.invalidConfig);
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] });
 attachDesktopStatus(client);
-const player = createAudioPlayer({ behaviors: { noSubscriber: NoSubscriberBehavior.Pause } });
-let connection, current, processes = [], textChannel, busy = false, generation = 0, emptySince;
+const audio = new JukeboxAudio(new AudioCache());
+const player = audio.player;
+let connection, current, textChannel, busy = false, generation = 0, emptySince;
 const queue = [];
-const preload = new NextTrackPreload(new AudioCache());
-let playbackController, playingLease;
+const preloadSkipped = new Set();
+let playbackController;
 const idleTimeoutMinutes = idleMinutes(process.env.IDLE_TIMEOUT_MINUTES);
 const idleTimeout = createIdleTimeout(idleTimeoutMinutes);
 const say = message => textChannel?.send({ content: message, allowedMentions: { parse: [] } }).catch(() => {});
 function releasePlayback() {
   playbackController?.abort();
-  for (const p of processes) p.kill('SIGKILL');
-  processes = []; playingLease?.release(); playingLease = null;
+  audio.stop();
 }
 function stop() {
   generation++; queue.length = 0; current = undefined;
-  preload.set(null); releasePlayback(); player.stop(true);
+  audio.preload(null); releasePlayback();
   const old = connection; connection = undefined; old?.destroy();
   idleTimeout.reset(); emptySince = undefined;
 }
 function next() {
+  preloadSkipped.clear();
   releasePlayback(); current = queue.shift();
-  if (!current || !connection) { preload.set(null); return; }
+  if (!current || !connection) { audio.preload(null); return; }
   idleTimeout.reset();
   const track = current;
   playbackController = new AbortController();
   const { signal } = playbackController;
-  async function start() {
-    const lease = await preload.claim(track, signal);
-    if (signal.aborted) { lease?.release(); return; }
-    playingLease = lease;
-    const prepared = lease ? null : await prepareDownload(track, { signal });
-    if (!signal.aborted) startPlayback(track, prepared, lease?.file);
-  }
-  start().catch(() => {
+  audio.start(track, { signal }).then(() => {
+    if (!signal.aborted) { say(messages.nowPlaying(track.title)); preloadNext(); }
+  }).catch(error => {
     if (signal.aborted) return;
-    say(messages.playbackFailed(track.title, queue.length > 0));
+    if (error.diagnosticStage === 'cache-timeout') console.warn('[Playback] cache-timeout');
+    const reason = error.diagnosticStage === 'cache-timeout' ? '等待播放超时。' : '';
+    say(reason + messages.playbackFailed(track.title, queue.length > 0));
     next();
   });
 }
-function startPlayback(track, prepared, file) {
-  const download = file ? null : spawn(mediaTool('yt-dlp'), prepared.args, { windowsHide: true });
-  const ffmpeg = spawn(mediaTool('ffmpeg'), ['-hide_banner', '-loglevel', 'error', '-i', file ?? 'pipe:0', '-vn', '-t', '7200', '-ac', '2', '-ar', '48000', '-f', 's16le', 'pipe:1'], { windowsHide: true });
-  processes = download ? [download, ffmpeg] : [ffmpeg];
-  let reported = false;
-  const fail = () => {
-    if (current !== track || reported) return;
-    reported = true; say(messages.playbackFailed(track.title, queue.length > 0));
-    if (!player.stop(true)) next();
-  };
-  for (const p of processes) {
-    p.stderr.resume(); p.on('error', fail);
-    p.on('close', code => { if (code !== 0 && code !== null) fail(); });
-  }
-  ffmpeg.stdin.on('error', fail);
-  ffmpeg.stdout.on('error', fail);
-  if (download) {
-    download.stdout.on('error', fail);
-    download.stdin.on('error', fail);
-    download.stdout.pipe(ffmpeg.stdin);
-    download.stdin.end(prepared.input);
-  } else ffmpeg.stdin.end();
-  player.play(createAudioResource(ffmpeg.stdout, { inputType: StreamType.Raw }));
-  say(messages.nowPlaying(track.title));
-}
 function preloadNext() {
-  if (player.state.status === AudioPlayerStatus.Playing) preload.set(queue[0] ?? null);
+  if (player.state.status === AudioPlayerStatus.Playing) audio.preload(queue.find(track => !preloadSkipped.has(track)) ?? null);
 }
+audio.on('preloadResult', (track, ready) => {
+  if (!ready) { preloadSkipped.add(track); preloadNext(); }
+});
 player.on(AudioPlayerStatus.Playing, preloadNext);
-player.on(AudioPlayerStatus.Idle, next);
-player.on('error', () => { say(messages.playbackInterrupted(queue.length > 0)); if (!player.stop(true)) next(); });
+audio.on('end', next);
+audio.on('failure', () => { say(messages.playbackInterrupted(queue.length > 0)); next(); });
 const commands = [
   new SlashCommandBuilder().setName('play').setDescription(messages.command.play).addStringOption(o => o.setName('link').setDescription(messages.command.link).setRequired(true)),
   ...['queue', 'skip', 'pause', 'resume', 'stop'].map(name => new SlashCommandBuilder().setName(name).setDescription(messages.command[name])),
@@ -149,7 +124,7 @@ client.on('interactionCreate', async i => {
       if (!current) throw new UserFacingError('nothingPlaying');
       if (i.commandName === 'skip') {
         confirmation = messages.skipped(current.title, queue.length > 0);
-        if (!player.stop(true)) next();
+        next();
       } else if (i.commandName === 'pause') {
         const paused = player.state.status === AudioPlayerStatus.Paused || player.state.status === AudioPlayerStatus.AutoPaused;
         confirmation = paused ? messages.alreadyPaused : player.pause() ? messages.paused : messages.pauseNotReady;

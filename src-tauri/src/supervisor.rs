@@ -669,6 +669,8 @@ pub fn child_environment(
         ("ACTIVITY_PORT", config.port.to_string()),
         ("ACTIVITY_HOST", config.bind.clone()),
         ("ACTIVITY_PUBLIC_ORIGIN", config.public_origin.clone()),
+        ("NETEASE_QUALITY", config.netease_quality.clone()),
+        ("DOWNLOAD_TIMEOUT_SECONDS", config.download_timeout_seconds.to_string()),
         ("AUDIO_CACHE_MB", config.cache_mb.to_string()),
         ("IDLE_TIMEOUT_MINUTES", config.idle_minutes.to_string()),
         (
@@ -702,6 +704,7 @@ async fn classify_output<R: AsyncRead + Unpin>(mut reader: R, tx: mpsc::Sender<F
         let text = String::from_utf8_lossy(&buffer[..n]);
         for (pattern, message) in [
             ("MODULE_NOT_FOUND", "运行组件不完整，请重新安装桌面应用。"),
+            ("cache-timeout", "等待播放超时，已跳过这首歌。"),
             ("cache-download", "音频下载失败，请检查来源平台或登录状态。"),
             (
                 "TokenInvalid",

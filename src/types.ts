@@ -11,6 +11,8 @@ export interface Config {
   sshUser: string;
   sshPort: number;
   remotePort: number;
+  neteaseQuality: "standard" | "higher" | "exhigh" | "best";
+  downloadTimeoutSeconds: number;
   cacheMb: number;
   idleMinutes: number;
   autoStart: boolean;

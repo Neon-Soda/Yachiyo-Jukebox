@@ -18,7 +18,7 @@
 下载完成后，在 PowerShell 使用实际文件路径计算摘要，与同一 Release 的校验文件比较：
 
 ```powershell
-Get-FileHash -LiteralPath '.\Yachiyo-1.3.0-Windows-x64.exe' -Algorithm SHA256
+Get-FileHash -LiteralPath '.\Yachiyo-1.3.1-Windows-x64.exe' -Algorithm SHA256
 ```
 
 文件名中的版本仅为示例。摘要相同可用于检查文件是否与发布附件一致，不等于发布者数字签名或安全性保证。

@@ -50,6 +50,14 @@ try{
  assert.equal(await evaluate(`return getComputedStyle($('sshKeyText')).webkitTextSecurity`),'disc');await click('toggle-ssh-key');assert.equal(await evaluate(`return $('toggle-ssh-key').getAttribute('aria-pressed')`),'true');await click('save-ssh-credentials');await idle();assert.equal(await evaluate(`return $('sshKeyText').value`),'');assert.equal(await evaluate(`return $('publicOrigin').value`),'https://unsaved.example.test');snapshot=(await invoke('snapshot')).value;assert.equal(snapshot.saved.sshKey,true);assert.equal(snapshot.config.connectionMode,'direct');report.checks.push('ssh-paste-parser-encryption-and-draft-isolation');
  const beforeBad=await readFile(join(profile,'credentials.dpapi'));await input('knownHostsText','invalid host record');await click('save-ssh-credentials');await idle();assert.ok(beforeBad.equals(await readFile(join(profile,'credentials.dpapi'))));report.checks.push('invalid-ssh-rejected-atomically');
  const known=join(profile,'test-known-hosts');await writeFile(known,ssh.knownHosts);await pick(known);await evaluate(`document.querySelector('[data-import-secret=knownHosts]').click()`);await idle();assert.equal(await evaluate(`return $('knownHostsText').value`),'');
+ await page('playback');
+ assert.equal(await evaluate("return $('neteaseQuality').value"),'standard');
+ assert.equal(await evaluate("return $('downloadTimeoutSeconds').value"),'30');
+ await input('neteaseQuality','higher','change');await input('downloadTimeoutSeconds','45');
+ await evaluate("$('playback-form').requestSubmit()");await idle();
+ const playbackConfig=(await invoke('snapshot')).value.config;
+ assert.equal(playbackConfig.neteaseQuality,'higher');assert.equal(playbackConfig.downloadTimeoutSeconds,45);
+ report.checks.push('playback-quality-timeout-save');
  const cookie=join(profile,'test-cookie.txt');await writeFile(cookie,'# Netscape HTTP Cookie File\n.example.test\tTRUE\t/\tFALSE\t0\ttest\tEXAMPLE_COOKIE\n');await page('playback');await pick(cookie);await evaluate(`document.querySelector('[data-import-secret=bilibiliCookies]').click()`);await idle();assert.equal((await invoke('snapshot')).value.saved.bilibiliCookies,true);report.checks.push('native-file-import-routes');
  await page('appearance');const settingsBefore=await readFile(join(profile,'settings.json')),secretsBefore=await readFile(join(profile,'credentials.dpapi'));
  await input('language','en','change');await until(()=>evaluate(`return document.documentElement.lang==='en' && !$('language').disabled`),'English saved');assert.equal(await evaluate(`return $('page-title').textContent`),'App appearance');

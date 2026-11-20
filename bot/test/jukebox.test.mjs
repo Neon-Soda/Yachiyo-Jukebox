@@ -1,6 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { EventEmitter } from 'node:events';
+import { JukeboxAudio } from '../src/jukebox-audio.mjs';
+import { AudioCache, NextTrackPreload } from '../src/audio-cache.mjs';
 import { createChannelRooms, JukeboxRoom } from '../src/jukebox-room.mjs';
 import { createDiscordAuth, validateActivityInstance } from '../src/activity-auth.mjs';
 import { createRoomActionHandler } from '../src/jukebox-actions.mjs';
@@ -18,6 +20,35 @@ function room(channelId = 'a', options = {}) {
 }
 async function songs(r, count = 3) { for (let i = 0; i < count; i++) await r.add(`https://youtu.be/video${i}`); }
 const tick = () => new Promise(resolve => setImmediate(resolve));
+
+test('selecting a track bounds the whole foreground wait even if an earlier preload never settles', async () => {
+  const cache = new AudioCache({ timeoutMs: 80 });
+  const audio = new JukeboxAudio(cache);
+  const r = room('deadline', { audio });
+  await songs(r, 2);
+  const [stuck, next] = r.tracks;
+  let resolveOld, foregroundSignal, successorSignal, released = 0;
+  cache.get = (_track, signal) => {
+    foregroundSignal = signal;
+    return new Promise(resolve => { resolveOld = resolve; });
+  };
+  audio.preload(stuck);
+  const original = audio.startBeforeDeadline.bind(audio);
+  audio.startBeforeDeadline = (track, options, signal, deadline) => {
+    if (track.id === next.id) { successorSignal = signal; return; }
+    return original(track, options, signal, deadline);
+  };
+  try {
+    await r.play(stuck.id); await tick();
+    assert.equal(r.currentId, next.id); assert.equal(r.status, 'playing');
+    assert.ok(foregroundSignal.aborted);
+    assert.ok(r.snapshot().events.some(event => event.kind === 'error' && event.message.includes('超时')));
+    resolveOld({ file: 'late', release: () => { released++; } }); await tick();
+    assert.equal(released, 1); assert.equal(r.currentId, next.id);
+    await new Promise(resolve => setTimeout(resolve, 100));
+    assert.equal(successorSignal.aborted, false);
+  } finally { r.close(); }
+});
 
 test('relaunching before the last participant check reattaches to the playing room', async () => {
   const channel = { id: '123456789012345678' }, guildId = 'guild';
@@ -260,6 +291,19 @@ test('all failing songs stop without an infinite loop, even in repeat mode', asy
   assert.equal(starts, 3); assert.equal(r.status, 'idle'); assert.ok(!JSON.stringify(r.snapshot()).includes('private upstream'));
 });
 
+test('a timed-out last track in list repeat reports the error and starts the next playable track', async () => {
+  const r = room(); await songs(r, 2);
+  const [first, last] = r.tracks;
+  const start = r.audio.start.bind(r.audio);
+  r.audio.start = async (track, options) => {
+    if (track.id === last.id) throw Object.assign(new Error(), { diagnosticStage: 'cache-timeout' });
+    return start(track, options);
+  };
+  r.setMode('repeat-all'); await r.play(last.id); await tick();
+  assert.equal(r.currentId, first.id); assert.equal(r.status, 'playing');
+  assert.ok(r.snapshot().events.some(e => e.kind === 'error' && e.message.includes('超时')));
+});
+
 test('playback failures expose only fixed diagnostic stages, never upstream error text', async () => {
   for (const stage of ['cache-timeout', 'private-upstream-value']) {
     const audio = new Audio();
@@ -271,6 +315,51 @@ test('playback failures expose only fixed diagnostic stages, never upstream erro
     assert.equal(snapshot.includes('cache-timeout'), stage === 'cache-timeout');
   }
 });
+test('removing a loading track or a preload cancels its cache job, and removing current preserves the successor download', async () => {
+  const cache = new AudioCache(), preload = new NextTrackPreload(cache), jobs = [];
+  cache.obtain = (track, key, signal) => new Promise((resolve, reject) => {
+    jobs.push({ track, signal, finish: () => resolve('cache.mp3') });
+    signal.addEventListener('abort', () => reject(signal.reason), { once: true });
+  });
+  const audio = new Audio();
+  audio.preload = track => preload.set(track);
+  audio.start = async (track, { signal }) => { audio.lease = await preload.claim(track, signal) ?? await cache.get(track, signal); };
+  audio.stop = () => { audio.lease?.release(); audio.lease = null; };
+  const r = room('voice', { audio }); await songs(r, 4);
+  const [a, b, c, d] = r.tracks;
+  const starting = r.play(a.id); await tick();
+  const removing = r.remove(a.id); await tick();
+  assert.equal(jobs[0].signal.aborted, true); assert.equal(jobs[1].track, b);
+  jobs[1].finish(); await Promise.all([starting, removing]); await tick();
+  assert.equal(r.status, 'playing'); assert.equal(jobs[2].track, c);
+  await r.remove(c.id); await tick();
+  assert.equal(jobs[2].signal.aborted, true); assert.equal(jobs[3].track, d);
+  const advancing = r.remove(b.id); await tick();
+  assert.equal(jobs[3].signal.aborted, false); assert.equal(jobs.length, 4);
+  jobs[3].finish(); await advancing; assert.equal(r.currentId, d.id); assert.equal(r.status, 'playing');
+  assert.ok(!r.history.includes(b.id)); r.close(); assert.equal(cache.pins.size, 0);
+});
+
+test('a switched download preloads before the normal successor without changing playback order', async () => {
+  const audio = new Audio(), targets = [], releases = [];
+  let firstAbort;
+  audio.holdPartial = track => () => releases.push(track.id);
+  audio.preload = track => targets.push(track?.id);
+  const r = room('voice', { audio }); await songs(r, 5);
+  const [a,b,c,d,e] = r.tracks;
+  audio.start = async (track, {signal}) => {
+    if (track === a) await new Promise(resolve => { firstAbort = signal; signal.addEventListener('abort', resolve, {once:true}); });
+  };
+  const pending = r.play(a.id); await r.play(b.id); await pending;
+  assert.ok(firstAbort.aborted); assert.equal(targets.at(-1), a.id);
+  assert.deepEqual(r.tracks, [a,b,c,d,e]);
+  audio.emit('preloadResult', a, true); assert.equal(targets.at(-1), c.id);
+  audio.emit('preloadResult', c, false); assert.equal(targets.at(-1), d.id);
+  audio.emit('preloadResult', d, false); assert.equal(targets.at(-1), e.id);
+  assert.deepEqual(releases, [a.id]); assert.equal(r.currentId, b.id);
+  await r.next(true); assert.equal(r.currentId, c.id); r.close();
+});
+
 test('removing current song selects a remaining song and moving songs preserves current identity', async () => {
   const r = room(); await songs(r); await r.play(); const id = r.currentId;
   r.move(id, 1); assert.equal(r.currentId, id); assert.equal(r.tracks[1].id, id);

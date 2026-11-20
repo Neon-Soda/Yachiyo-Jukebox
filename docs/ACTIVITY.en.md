@@ -44,6 +44,10 @@ The player shows the current title, artwork, duration, and position. Pause / res
 | Repeat one | Repeats the current track when it ends |
 | Shuffle | Chooses subsequent tracks at random |
 
+In **Playback & startup → Playback settings**, choose the NetEase quality (standard by default) and the foreground wait per quality level (30 seconds by default, adjustable from 5 to 300). Save and restart the bot to apply these settings. Selecting a track starts the clock, including time spent waiting for the cache writer, claiming a preload, resolving metadata, downloading and converting audio. If a lower quality is available when the first interval expires, it gets one more interval. If no lower quality exists or the second interval expires, the bot reports a timeout and advances.
+
+Switching away during a download gives the selected track priority. Once it plays, the interrupted track gets the first preload slot, followed by the normal upcoming track. The playlist order stays the same. Sources that support resuming can continue from the downloaded bytes. One track preloads at a time, with up to 60 seconds per quality level. A failed preload gives its slot to the next candidate. Removing a track cancels its preparation or preload.
+
 During playback, the bot downloads and converts one upcoming track. Queue edits update the selection, shuffle prepares the actual next draw, and repeat one reuses the current audio. Skipping to a track that is still downloading continues the same download.
 
 The playlist remains after sequential playback finishes. Adding a new song then starts that new track; adding a collection starts the first track of that import. During playback or pause, new tracks are appended.

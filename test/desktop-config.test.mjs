@@ -17,6 +17,16 @@ test('desktop configurations keep direct public access independent of SSH and re
   assert.throws(() => readyToStart({ ...config, connectionMode: 'ssh' }, { botToken: 'example', clientSecret: 'example' }));
   for (const patch of [{ publicOrigin: 'https://user:password@example.com' }, { publicOrigin: 'https://example.com/?token=secret' }, { publicOrigin: 'http://example.com' }, { sshUser: '-oProxyCommand=evil' }, { sshHost: 'vps & echo x' }, { port: 1 }, { port: 3178.2 }, { bind: 'evil' }]) assert.throws(() => normalizeSettings({ ...config, ...patch }));
 });
+test('old desktop settings default to standard quality and a 30-second download timeout', () => {
+  const old = defaults(); delete old.neteaseQuality; delete old.downloadTimeoutSeconds;
+  const restored = normalizeSettings(old);
+  assert.equal(restored.neteaseQuality, 'standard'); assert.equal(restored.downloadTimeoutSeconds, 30);
+  for (const patch of [{ neteaseQuality: 'invalid' }, { downloadTimeoutSeconds: 4 }, { downloadTimeoutSeconds: 301 }, { downloadTimeoutSeconds: 8.5 }])
+    assert.throws(() => normalizeSettings({ ...old, ...patch }));
+  const env = childEnvironment(normalizeSettings({ ...old, neteaseQuality: 'exhigh', downloadTimeoutSeconds: 45 }), {}, 'runtime', 'data', path);
+  assert.equal(env.NETEASE_QUALITY, 'exhigh'); assert.equal(env.DOWNLOAD_TIMEOUT_SECONDS, '45');
+});
+
 test('public snapshots and child environments never expose or inherit unrelated credentials', () => {
   const config = defaults(), secrets = { botToken: 'EXAMPLE_PRIVATE_BOT', clientSecret: 'EXAMPLE_PRIVATE_CLIENT', bilibiliCookies: 'EXAMPLE_PRIVATE_COOKIE' };
   const serialized = JSON.stringify(publicSettings(config, secrets));

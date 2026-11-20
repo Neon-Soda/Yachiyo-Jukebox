@@ -44,6 +44,8 @@ pub struct Config {
     pub ssh_user: String,
     pub ssh_port: u16,
     pub remote_port: u16,
+    pub netease_quality: String,
+    pub download_timeout_seconds: u32,
     pub cache_mb: u32,
     pub idle_minutes: u32,
     pub auto_start: bool,
@@ -64,6 +66,8 @@ impl Default for Config {
             ssh_user: String::new(),
             ssh_port: 22,
             remote_port: 43178,
+            netease_quality: "standard".into(),
+            download_timeout_seconds: 30,
             cache_mb: 1024,
             idle_minutes: 5,
             auto_start: true,
@@ -99,6 +103,12 @@ impl Config {
         }
         if !(256..=10240).contains(&c.cache_mb) {
             return err("缓存容量须为 256～10240 的整数。");
+        }
+        if !["standard", "higher", "exhigh", "best"].contains(&c.netease_quality.as_str()) {
+            return err("网易云音质无效。");
+        }
+        if !(5..=300).contains(&c.download_timeout_seconds) {
+            return err("切歌每档等待须为 5～300 的整数。");
         }
         if c.idle_minutes > 1440 {
             return err("指令闲置分钟数须为 0～1440 的整数。");
@@ -291,6 +301,18 @@ pub fn catalog() -> Value {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn playback_settings_migrate_and_validate() {
+        let mut config = Config::parse(json!({})).unwrap();
+        assert_eq!(config.netease_quality, "standard");
+        assert_eq!(config.download_timeout_seconds, 30);
+        for seconds in [5, 45, 300] {
+            config.download_timeout_seconds = seconds;
+            assert!(Config::parse(json!(config)).is_ok());
+        }
+        assert!(Config::parse(json!({"downloadTimeoutSeconds": 301})).is_err());
+        assert!(Config::parse(json!({"neteaseQuality": "unknown"})).is_err());
+    }
     #[test]
     fn invalid_network_and_ids_are_rejected() {
         let mut v = serde_json::to_value(Config::default()).unwrap();

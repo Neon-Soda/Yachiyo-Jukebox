@@ -52,6 +52,21 @@ import {
           </div>
         </div>
         <div class="form-grid">
+          <label>
+            {{ t("网易云首选音质") }}
+            <select id="neteaseQuality" v-model="state.config.neteaseQuality">
+              <option value="standard">{{ t("标准") }}</option>
+              <option value="higher">{{ t("较高") }}</option>
+              <option value="exhigh">{{ t("极高") }}</option>
+              <option value="best">{{ t("最高可用音质") }}</option>
+            </select>
+            <small>{{ t("用于点歌和下一首预载。") }}</small>
+          </label>
+          <label>
+            {{ t("切歌每档等待（秒）") }}
+            <input id="downloadTimeoutSeconds" type="number" required min="5" max="300" step="1" v-model.number="state.config.downloadTimeoutSeconds" />
+            <small>{{ t("从切歌开始计时，每档可设 5～300 秒。有更低音质时再给一档时间，仍超时就跳过。后台预载每档最多 60 秒。") }}</small>
+          </label>
           <label
             >{{ t("缓存容量（MB）")
             }}<input

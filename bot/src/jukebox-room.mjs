@@ -42,6 +42,14 @@ export class JukeboxRoom extends EventEmitter {
     this.generation = 0; this.addGeneration = 0; this.revision = 0;
     this.busy = false; this.closed = false; this.activityInstances = null;
     this.events = []; this.eventSequence = 0;
+    this.interrupted = new Map(); this.preloadSkipped = new Set();
+    audio.on('preloadResult', (track, ready) => {
+      if (this.closed || this.status !== 'playing') return;
+      if (!ready) this.preloadSkipped.add(track.id);
+      if (this.interrupted.has(track.id)) this.releasePartial(track.id);
+      else if (ready) return;
+      this.changed();
+    });
     audio.on('end', () => { if (!this.closed && this.status === 'playing') this.next(true); });
     audio.on('failure', error => this.playbackFailed(this.generation, error));
   }
@@ -64,13 +72,27 @@ export class JukeboxRoom extends EventEmitter {
     }
     if (this.activityInstances.size === 0) this.close();
   }
+  releasePartial(id) {
+    this.interrupted.get(id)?.();
+    this.interrupted.delete(id);
+  }
+  preloadCandidate() {
+    if (this.status !== 'playing') return null;
+    const eligible = track => track && track.url !== this.current?.url && !this.preloadSkipped.has(track.id);
+    for (const id of [...this.interrupted.keys()].reverse()) {
+      const track = this.tracks.find(t => t.id === id);
+      if (eligible(track)) return track;
+    }
+    const next = this.nextTrackId(true);
+    const index = this.tracks.findIndex(t => t.id === next);
+    if (index < 0 || next === this.currentId) return null;
+    const tail = this.tracks.slice(index);
+    if (this.mode === 'shuffle' || this.mode === 'repeat-all') tail.push(...this.tracks.slice(0, index));
+    return tail.find(eligible) ?? null;
+  }
   changed() {
     // start() claims a matching preload during the loading transition.
-    if (this.status !== 'loading' && this.audio.preload) {
-      const next = this.status === 'playing' ? this.nextTrackId(true) : null;
-      const track = next && next !== this.currentId ? this.tracks.find(t => t.id === next) : null;
-      this.audio.preload(track?.url !== this.current?.url ? track : null);
-    }
+    if (this.status !== 'loading') this.audio.preload?.(this.preloadCandidate());
     this.revision++; this.emit('change', this.snapshot());
   }
   snapshot() {
@@ -143,6 +165,10 @@ export class JukeboxRoom extends EventEmitter {
     if (!Number.isFinite(position) || position < 0 || position > (track.duration ?? 7200)) throw new UserFacingError('invalidSeek');
     if (remember && this.currentId && this.currentId !== id) this.history.push(this.currentId);
     this.history = this.history.slice(-100);
+    if (this.status === 'loading' && this.current && this.currentId !== id && this.audio.holdPartial) {
+      if (!this.interrupted.has(this.currentId)) this.interrupted.set(this.currentId, this.audio.holdPartial(this.current));
+    }
+    this.preloadSkipped.clear();
     const version = ++this.generation;
     this.abort?.abort(); this.abort = new AbortController();
     this.audio.stop(); this.currentId = id; this.status = 'loading'; this.error = null;
@@ -150,6 +176,7 @@ export class JukeboxRoom extends EventEmitter {
     try {
       await this.audio.start(track, { position, paused, signal: this.abort.signal });
       if (this.closed || version !== this.generation) return;
+      this.releasePartial(id);
       this.status = paused ? 'paused' : 'playing'; this.failed.clear(); this.changed();
       this.recordOperation(`${paused ? uiCopy("room.999d9b5dffda", "已定位并保持暂停") : uiCopy("room.803a3019e28a", "已开始播放")}《${track.title}》`);
       this.emit('playing', track);
@@ -159,6 +186,7 @@ export class JukeboxRoom extends EventEmitter {
   }
   playbackFailed(version, error) {
     if (this.closed || version !== this.generation || !this.current || this.status === 'idle') return;
+    this.releasePartial(this.currentId);
     this.failed.add(this.currentId);
     const stage = Object.hasOwn(playbackStages, error?.diagnosticStage) ? error.diagnosticStage : 'playback';
     console.warn(`[Activity playback] ${stage}`);
@@ -166,11 +194,14 @@ export class JukeboxRoom extends EventEmitter {
       ? uiCopy("room.b9a623837b9d", "这一曲没能顺利播放，请重新选择歌曲后重试。")
       : uiCopy("room.11cd38a52110", "这一曲没能顺利播放：{value1}（{stage}）。", { value1: playbackStages[stage], stage: stage });
     this.audio.stop(); this.status = 'idle'; this.changed();
-    this.recordOperation(uiCopy("room.f883bee2818e", "《{title}》播放失败，请查看错误提示", { title: this.current.title }), uiCopy("room.2e6b61bd2efe", "点歌台"), 'error');
+    const failureNotice = stage === 'cache-timeout' ? '《' + this.current.title + '》等待播放超时。' : uiCopy("room.f883bee2818e", "《{title}》播放失败，请查看错误提示", { title: this.current.title });
+    this.recordOperation(failureNotice, uiCopy("room.2e6b61bd2efe", "点歌台"), 'error');
     this.emit('playbackFailure');
     const available = this.tracks.filter(t => !this.failed.has(t.id));
     if (!available.length) return;
-    const next = this.tracks.slice(this.tracks.indexOf(this.current) + 1).find(t => !this.failed.has(t.id));
+    let next = this.tracks.slice(this.tracks.indexOf(this.current) + 1).find(t => !this.failed.has(t.id));
+    if (this.mode === 'shuffle') next = available[Math.floor(this.random() * available.length)];
+    else if (!next && this.mode === 'repeat-all') next = available[0];
     if (next) void this.play(next.id);
   }
   nextTrackId(automatic) {
@@ -239,11 +270,14 @@ export class JukeboxRoom extends EventEmitter {
     const wasCurrent = id === this.currentId;
     const wasActive = this.status !== 'idle';
     const wasPaused = this.status === 'paused';
-    if (wasCurrent) this.stop();
+    this.releasePartial(id); this.preloadSkipped.delete(id);
     this.tracks.splice(index, 1); this.history = this.history.filter(x => x !== id);
     this.shuffleBag = this.shuffleBag.filter(x => x !== id);
-    this.changed();
-    if (wasCurrent && wasActive && this.tracks.length) await this.play(this.tracks[Math.min(index, this.tracks.length - 1)].id, 0, wasPaused);
+    if (!wasCurrent) { this.changed(); return; }
+    if (!wasActive || !this.tracks.length) { this.stop(); return; }
+    // play() cancels the removed track and claims the successor's preload.
+    // Publishing an idle state here would discard that still-useful download.
+    await this.play(this.tracks[Math.min(index, this.tracks.length - 1)].id, 0, wasPaused, false);
   }
   move(id, direction) {
     this.assertOpen();
@@ -254,6 +288,8 @@ export class JukeboxRoom extends EventEmitter {
     this.changed();
   }
   stop() {
+    for (const id of this.interrupted.keys()) this.releasePartial(id);
+    this.preloadSkipped.clear();
     this.generation++; this.abort?.abort(); this.audio.stop();
     this.currentId = null; this.status = 'idle'; this.changed();
   }

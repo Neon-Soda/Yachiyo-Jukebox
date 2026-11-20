@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { EventEmitter } from 'node:events';
 import { PassThrough } from 'node:stream';
-import { inspect, parseLink, prepareDownload, prepareDownloadAlternatives } from '../src/media.mjs';
+import { inspect, parseLink, argsFor, prepareDownload, prepareDownloadAlternatives } from '../src/media.mjs';
 import { publicBilibiliInfo } from '../src/bilibili.mjs';
 
 const link = () => parseLink('https://www.bilibili.com/video/BV1vb4y1b7RU/');
@@ -116,13 +116,27 @@ test('queued Bilibili metadata is refreshed after five minutes', async () => {
   assert.ok(prepared.input.includes('signature=refreshed'));
 });
 
-test('YouTube and NetEase retain their URL-based download path', async () => {
-  for (const track of [parseLink('https://youtu.be/test'), parseLink('https://music.163.com/song?id=123')]) {
-    const prepared = await prepareDownload(track);
-    assert.equal(prepared.input, undefined);
+test('YouTube and NetEase reuse inspected metadata and apply platform-specific selectors to downloads', async () => {
+  for (const parsed of [parseLink('https://youtu.be/test'), parseLink('https://music.163.com/song?id=123')]) {
+    const mock = extractor([{ out: metadata }]);
+    const song = await inspect(parsed, { spawnProcess: mock.spawnProcess });
+    const prepared = await prepareDownload(song, { inspectTrack: () => assert.fail('duplicate extraction') });
+    assert.equal(mock.calls, 1);
+    assert.equal(prepared.args[prepared.args.indexOf('-f') + 1], argsFor(parsed).at(argsFor(parsed).indexOf('-f') + 1));
     assert.ok(!prepared.args.includes('--http-chunk-size'));
-    assert.deepEqual(prepared.args.slice(-2), ['--', track.url]);
+    if (parsed.platform === 'YOUTUBE') {
+      assert.deepEqual(prepared.args.slice(-2), ['--', parsed.url]); assert.ok(prepared.formatInfo);
+    } else { assert.ok(prepared.input); assert.deepEqual(prepared.args.slice(-2), ['--load-info-json', '-']); }
   }
+});
+test('NetEase defaults to standard and higher preferences permit only their lower tiers', () => {
+  const track = parseLink('https://music.163.com/song?id=123'), old = process.env.NETEASE_QUALITY;
+  try {
+    for (const [value, expected] of [[undefined,'standard'], ['higher','higher/standard'], ['exhigh','exhigh/higher/standard'], ['best','bestaudio/best']]) {
+      if (value) process.env.NETEASE_QUALITY = value; else delete process.env.NETEASE_QUALITY;
+      const args = argsFor(track); assert.equal(args[args.indexOf('-f') + 1], expected);
+    }
+  } finally { if (old === undefined) delete process.env.NETEASE_QUALITY; else process.env.NETEASE_QUALITY = old; }
 });
 
 test('public Bilibili metadata retains only valid, distinct and bounded CDN backups in private download input', async () => {

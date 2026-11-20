@@ -8,7 +8,7 @@ async function read(file, limit = 2_000_000) { if ((await stat(file)).size > lim
 async function importProject(project) {
   try {
     const env = parse(await read(join(project, '.env'), 64000));
-    const config = { guildId: env.GUILD_ID || '', clientId: env.DISCORD_CLIENT_ID || '', activityEnabled: env.ACTIVITY_ENABLED === '1', publicOrigin: env.ACTIVITY_PUBLIC_ORIGIN || '', port: Number(env.ACTIVITY_PORT || 3178), cacheMb: Number(env.AUDIO_CACHE_MB || 1024), idleMinutes: Number(env.IDLE_TIMEOUT_MINUTES || 5) };
+    const config = { guildId: env.GUILD_ID || '', clientId: env.DISCORD_CLIENT_ID || '', activityEnabled: env.ACTIVITY_ENABLED === '1', publicOrigin: env.ACTIVITY_PUBLIC_ORIGIN || '', port: Number(env.ACTIVITY_PORT || 3178), neteaseQuality: env.NETEASE_QUALITY || 'standard', downloadTimeoutSeconds: Number(env.DOWNLOAD_TIMEOUT_SECONDS || 30), cacheMb: Number(env.AUDIO_CACHE_MB || 1024), idleMinutes: Number(env.IDLE_TIMEOUT_MINUTES || 5) };
     const secrets = { botToken: env.DISCORD_TOKEN || '', clientSecret: env.DISCORD_CLIENT_SECRET || '' };
     for (const platform of ['youtube', 'bilibili', 'netease']) if (env[`${platform.toUpperCase()}_COOKIES`]) secrets[`${platform}Cookies`] = await read(resolve(project, env[`${platform.toUpperCase()}_COOKIES`]));
     try {

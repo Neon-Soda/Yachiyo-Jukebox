@@ -1,4 +1,4 @@
-import { NextTrackPreload } from './audio-cache.mjs';
+import { NextTrackPreload, downloadTimeoutError } from './audio-cache.mjs';
 import { mediaTool } from './media-tools.mjs';
 import { EventEmitter } from 'node:events';
 import { spawn } from 'node:child_process';
@@ -8,7 +8,7 @@ import { UserFacingError } from './messages.mjs';
 export class JukeboxAudio extends EventEmitter {
   constructor(cache) {
     super(); this.cache = cache; this.serial = 0; this.offset = 0; this.active = false;
-    this.upcoming = new NextTrackPreload(cache);
+    this.upcoming = new NextTrackPreload(cache, (track, ready) => this.emit('preloadResult', track, ready));
     this.player = createAudioPlayer({ behaviors: { noSubscriber: NoSubscriberBehavior.Pause } });
     this.player.on(AudioPlayerStatus.Idle, () => {
       if (!this.active) return;
@@ -18,9 +18,40 @@ export class JukeboxAudio extends EventEmitter {
     this.player.on('error', () => { if (this.active) { this.stop(); this.emit('failure', { diagnosticStage: 'audio-encode' }); } });
   }
   preload(track) { this.upcoming.set(track); }
-  async start(track, { position = 0, paused = false, signal }) {
+  holdPartial(track) { return this.cache.holdPartial(track); }
+  async start(track, options) {
+    // A fresh deadline belongs to the track selected for playback, even if a
+    // background preloader was already working or another writer is busy.
+    const wait = this.cache.select(track);
+    const timeout = new AbortController();
+    const stopTimer = wait.watch(() => wait.end, () => timeout.abort(downloadTimeoutError()));
+    const signal = AbortSignal.any([options.signal, timeout.signal]);
+    let onAbort;
+    const interrupted = new Promise((_, reject) => {
+      onAbort = () => reject(signal.reason);
+      if (signal.aborted) onAbort();
+      else signal.addEventListener('abort', onAbort, { once: true });
+    });
+    try {
+      await Promise.race([interrupted, this.startBeforeDeadline(track, options, signal, wait)]);
+      if (Date.now() >= wait.end) throw downloadTimeoutError();
+    } catch (error) {
+      if (!options.signal.aborted && (timeout.signal.aborted || Date.now() >= wait.end)) throw downloadTimeoutError();
+      throw error;
+    } finally {
+      stopTimer();
+      signal.removeEventListener('abort', onAbort);
+    }
+  }
+  async startBeforeDeadline(track, { position = 0, paused = false }, signal, wait) {
     const version = ++this.serial;
-    const lease = await this.upcoming.claim(track, signal) ?? await this.cache.get(track, signal);
+    let lease;
+    try { lease = await this.upcoming.claim(track, signal, wait); }
+    catch (error) {
+      // An older preload may expire before the foreground deadline.
+      if (signal.aborted || error.diagnosticStage !== 'cache-timeout' || Date.now() >= wait.first) throw error;
+    }
+    lease ??= await this.cache.get(track, signal, wait);
     if (signal.aborted || this.serial !== version) { lease.release(); throw new UserFacingError('cancelled'); }
     this.lease = lease; this.offset = position;
     const child = spawn(mediaTool('ffmpeg'), ['-hide_banner', '-loglevel', 'error', '-ss', String(position), '-i', lease.file, '-vn', '-ac', '2', '-ar', '48000', '-f', 's16le', 'pipe:1'], { windowsHide: true });
@@ -39,7 +70,7 @@ export class JukeboxAudio extends EventEmitter {
     }
     this.active = true;
     this.player.play(this.resource);
-    try { await entersState(this.player, AudioPlayerStatus.Playing, 20000); }
+    try { await entersState(this.player, AudioPlayerStatus.Playing, signal); }
     catch {
       const error = new UserFacingError('cacheDownloadFailed');
       error.diagnosticStage = this.player.state.status === AudioPlayerStatus.AutoPaused ? 'voice-subscriber' : 'audio-start';

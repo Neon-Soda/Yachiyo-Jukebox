@@ -1,4 +1,4 @@
-export const defaults = () => ({ version: 1, guildId: '', clientId: '', activityEnabled: true, publicOrigin: '', port: 3178, bind: '127.0.0.1', connectionMode: 'direct', sshHost: '', sshUser: '', sshPort: 22, remotePort: 43178, cacheMb: 1024, idleMinutes: 5, autoStart: true, launchAtLogin: false });
+export const defaults = () => ({ version: 1, guildId: '', clientId: '', activityEnabled: true, publicOrigin: '', port: 3178, bind: '127.0.0.1', connectionMode: 'direct', sshHost: '', sshUser: '', sshPort: 22, remotePort: 43178, neteaseQuality: 'standard', downloadTimeoutSeconds: 30, cacheMb: 1024, idleMinutes: 5, autoStart: true, launchAtLogin: false });
 export const secretKeys = ['botToken', 'clientSecret', 'youtubeCookies', 'bilibiliCookies', 'neteaseCookies', 'sshKey', 'knownHosts'];
 const integer = (value, min, max, label) => { if (!Number.isInteger(value) || value < min || value > max) throw new Error(`${label}须为 ${min}～${max} 的整数。`); return value; };
 export function normalizeSettings(input) {
@@ -15,6 +15,9 @@ export function normalizeSettings(input) {
   out.bind = input.bind;
   out.port = integer(input.port, 1024, 65535, '本地端口'); out.remotePort = integer(input.remotePort, 1024, 65535, '远端端口');
   out.sshPort = integer(input.sshPort, 1, 65535, 'SSH 端口');
+  out.neteaseQuality = input.neteaseQuality ?? out.neteaseQuality;
+  if (!['standard', 'higher', 'exhigh', 'best'].includes(out.neteaseQuality)) throw new Error('网易云音质无效。');
+  out.downloadTimeoutSeconds = integer(input.downloadTimeoutSeconds ?? out.downloadTimeoutSeconds, 5, 300, '切歌每档等待');
   out.cacheMb = integer(input.cacheMb, 256, 10240, '缓存容量'); out.idleMinutes = integer(input.idleMinutes, 0, 1440, '指令闲置分钟数');
   for (const key of ['sshHost', 'sshUser']) {
     const value = input[key] ?? '';
@@ -39,7 +42,7 @@ export function childEnvironment(config, secrets, runtime, data, pathModule) {
   const env = {};
   for (const name of ['SystemRoot', 'WINDIR', 'COMSPEC', 'TEMP', 'TMP', 'USERPROFILE', 'APPDATA', 'LOCALAPPDATA', 'PATHEXT', 'SystemDrive', 'NUMBER_OF_PROCESSORS', 'ProgramData', 'ALLUSERSPROFILE', 'USERNAME', 'USERDOMAIN', 'HOMEDRIVE', 'HOMEPATH', 'COMPUTERNAME', 'OS', 'PROCESSOR_ARCHITECTURE']) if (process.env[name]) env[name] = process.env[name];
   env.PATH = [join(runtime, 'tools'), join(process.env.SystemRoot || 'C:\\Windows', 'System32'), join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'OpenSSH')].join(delimiter);
-  Object.assign(env, { DISCORD_TOKEN: secrets.botToken, GUILD_ID: config.guildId, DISCORD_CLIENT_ID: config.clientId, DISCORD_CLIENT_SECRET: secrets.clientSecret || '', ACTIVITY_ENABLED: config.activityEnabled ? '1' : '0', ACTIVITY_PORT: String(config.port), ACTIVITY_HOST: config.bind, ACTIVITY_PUBLIC_ORIGIN: config.publicOrigin, AUDIO_CACHE_MB: String(config.cacheMb), IDLE_TIMEOUT_MINUTES: String(config.idleMinutes), YACHIYO_CUSTOMIZATION_PATH: join(data, 'customization.json') });
+  Object.assign(env, { DISCORD_TOKEN: secrets.botToken, GUILD_ID: config.guildId, DISCORD_CLIENT_ID: config.clientId, DISCORD_CLIENT_SECRET: secrets.clientSecret || '', ACTIVITY_ENABLED: config.activityEnabled ? '1' : '0', ACTIVITY_PORT: String(config.port), ACTIVITY_HOST: config.bind, ACTIVITY_PUBLIC_ORIGIN: config.publicOrigin, NETEASE_QUALITY: config.neteaseQuality ?? 'standard', DOWNLOAD_TIMEOUT_SECONDS: String(config.downloadTimeoutSeconds ?? 30), AUDIO_CACHE_MB: String(config.cacheMb), IDLE_TIMEOUT_MINUTES: String(config.idleMinutes), YACHIYO_CUSTOMIZATION_PATH: join(data, 'customization.json') });
   for (const platform of ['youtube', 'bilibili', 'netease']) if (secrets[`${platform}Cookies`]) env[`${platform.toUpperCase()}_COOKIES`] = join(data, 'private-runtime', `${platform}.txt`);
   return env;
 }
