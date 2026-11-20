@@ -1,3 +1,4 @@
+import { AudioCache, NextTrackPreload } from './audio-cache.mjs';
 import { mediaTool } from './media-tools.mjs';
 import { attachDesktopStatus } from './desktop-status.mjs';
 import { spawn } from 'node:child_process';
@@ -14,35 +15,46 @@ attachDesktopStatus(client);
 const player = createAudioPlayer({ behaviors: { noSubscriber: NoSubscriberBehavior.Pause } });
 let connection, current, processes = [], textChannel, busy = false, generation = 0, emptySince;
 const queue = [];
+const preload = new NextTrackPreload(new AudioCache());
+let playbackController, playingLease;
 const idleTimeoutMinutes = idleMinutes(process.env.IDLE_TIMEOUT_MINUTES);
 const idleTimeout = createIdleTimeout(idleTimeoutMinutes);
 const say = message => textChannel?.send({ content: message, allowedMentions: { parse: [] } }).catch(() => {});
-function killProcesses() { for (const p of processes) p.kill('SIGKILL'); processes = []; }
+function releasePlayback() {
+  playbackController?.abort();
+  for (const p of processes) p.kill('SIGKILL');
+  processes = []; playingLease?.release(); playingLease = null;
+}
 function stop() {
   generation++; queue.length = 0; current = undefined;
-  killProcesses(); player.stop(true);
+  preload.set(null); releasePlayback(); player.stop(true);
   const old = connection; connection = undefined; old?.destroy();
   idleTimeout.reset(); emptySince = undefined;
 }
 function next() {
-  killProcesses(); current = queue.shift();
-  if (!current || !connection) return;
+  releasePlayback(); current = queue.shift();
+  if (!current || !connection) { preload.set(null); return; }
   idleTimeout.reset();
   const track = current;
-  const version = generation;
-  prepareDownload(track).then(prepared => {
-    if (current !== track || generation !== version || !connection) return;
-    startPlayback(track, prepared);
-  }).catch(() => {
-    if (current !== track || generation !== version) return;
+  playbackController = new AbortController();
+  const { signal } = playbackController;
+  async function start() {
+    const lease = await preload.claim(track, signal);
+    if (signal.aborted) { lease?.release(); return; }
+    playingLease = lease;
+    const prepared = lease ? null : await prepareDownload(track, { signal });
+    if (!signal.aborted) startPlayback(track, prepared, lease?.file);
+  }
+  start().catch(() => {
+    if (signal.aborted) return;
     say(messages.playbackFailed(track.title, queue.length > 0));
     next();
   });
 }
-function startPlayback(track, prepared) {
-  const download = spawn(mediaTool('yt-dlp'), prepared.args, { windowsHide: true });
-  const ffmpeg = spawn(mediaTool('ffmpeg'), ['-hide_banner', '-loglevel', 'error', '-i', 'pipe:0', '-vn', '-t', '7200', '-ac', '2', '-ar', '48000', '-f', 's16le', 'pipe:1'], { windowsHide: true });
-  processes = [download, ffmpeg];
+function startPlayback(track, prepared, file) {
+  const download = file ? null : spawn(mediaTool('yt-dlp'), prepared.args, { windowsHide: true });
+  const ffmpeg = spawn(mediaTool('ffmpeg'), ['-hide_banner', '-loglevel', 'error', '-i', file ?? 'pipe:0', '-vn', '-t', '7200', '-ac', '2', '-ar', '48000', '-f', 's16le', 'pipe:1'], { windowsHide: true });
+  processes = download ? [download, ffmpeg] : [ffmpeg];
   let reported = false;
   const fail = () => {
     if (current !== track || reported) return;
@@ -53,15 +65,21 @@ function startPlayback(track, prepared) {
     p.stderr.resume(); p.on('error', fail);
     p.on('close', code => { if (code !== 0 && code !== null) fail(); });
   }
-  download.stdout.on('error', fail);
-  download.stdin.on('error', fail);
   ffmpeg.stdin.on('error', fail);
   ffmpeg.stdout.on('error', fail);
-  download.stdout.pipe(ffmpeg.stdin);
-  download.stdin.end(prepared.input);
+  if (download) {
+    download.stdout.on('error', fail);
+    download.stdin.on('error', fail);
+    download.stdout.pipe(ffmpeg.stdin);
+    download.stdin.end(prepared.input);
+  } else ffmpeg.stdin.end();
   player.play(createAudioResource(ffmpeg.stdout, { inputType: StreamType.Raw }));
   say(messages.nowPlaying(track.title));
 }
+function preloadNext() {
+  if (player.state.status === AudioPlayerStatus.Playing) preload.set(queue[0] ?? null);
+}
+player.on(AudioPlayerStatus.Playing, preloadNext);
 player.on(AudioPlayerStatus.Idle, next);
 player.on('error', () => { say(messages.playbackInterrupted(queue.length > 0)); if (!player.stop(true)) next(); });
 const commands = [
@@ -112,6 +130,7 @@ client.on('interactionCreate', async i => {
         if (generation !== version) throw new UserFacingError('cancelled');
         textChannel = i.channel; queue.push(track);
         if (!current) next();
+        else preloadNext();
         await i.editReply({ content: messages.added(track.title), allowedMentions: { parse: [] } });
       } finally { busy = false; }
       return;

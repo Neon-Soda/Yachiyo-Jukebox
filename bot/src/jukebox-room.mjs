@@ -64,7 +64,15 @@ export class JukeboxRoom extends EventEmitter {
     }
     if (this.activityInstances.size === 0) this.close();
   }
-  changed() { this.revision++; this.emit('change', this.snapshot()); }
+  changed() {
+    // start() claims a matching preload during the loading transition.
+    if (this.status !== 'loading' && this.audio.preload) {
+      const next = this.status === 'playing' ? this.nextTrackId(true) : null;
+      const track = next && next !== this.currentId ? this.tracks.find(t => t.id === next) : null;
+      this.audio.preload(track?.url !== this.current?.url ? track : null);
+    }
+    this.revision++; this.emit('change', this.snapshot());
+  }
   snapshot() {
     return {
       id: this.id, channelId: this.channelId, channelName: this.channelName,
@@ -165,19 +173,31 @@ export class JukeboxRoom extends EventEmitter {
     const next = this.tracks.slice(this.tracks.indexOf(this.current) + 1).find(t => !this.failed.has(t.id));
     if (next) void this.play(next.id);
   }
+  nextTrackId(automatic) {
+    if (!this.tracks.length) return null;
+    const index = this.tracks.findIndex(t => t.id === this.currentId);
+    if (automatic && this.mode === 'repeat-one' && index >= 0) return this.currentId;
+    if (this.mode === 'shuffle') {
+      // Reserve one draw. Only advancing consumes it, so queue updates and
+      // preloading agree on the next song without using up the shuffle bag.
+      this.shuffleBag = this.shuffleBag.filter(id => id !== this.currentId);
+      if (!this.shuffleBag.length) this.shuffleBag = this.tracks.map(t => t.id).filter(id => id !== this.currentId);
+      if (!this.shuffleBag.length) return this.currentId ?? this.tracks[0].id;
+      if (!this.shuffleBag.includes(this.shuffleNext)) this.shuffleNext = this.shuffleBag[Math.floor(this.random() * this.shuffleBag.length)];
+      return this.shuffleNext;
+    }
+    if (index + 1 < this.tracks.length) return this.tracks[index + 1].id;
+    if (this.mode === 'repeat-all' || (!automatic && this.mode === 'repeat-one')) return this.tracks[0].id;
+    return null;
+  }
   async next(automatic = false) {
     this.assertOpen();
     if (!this.tracks.length) return;
-    const index = this.tracks.findIndex(t => t.id === this.currentId);
-    let next;
-    if (automatic && this.mode === 'repeat-one' && index >= 0) next = this.currentId;
-    else if (this.mode === 'shuffle') {
-      this.shuffleBag = this.shuffleBag.filter(id => id !== this.currentId && this.tracks.some(t => t.id === id));
-      if (!this.shuffleBag.length) this.shuffleBag = this.tracks.map(t => t.id).filter(id => id !== this.currentId);
-      if (!this.shuffleBag.length) next = this.currentId ?? this.tracks[0].id;
-      else next = this.shuffleBag.splice(Math.floor(this.random() * this.shuffleBag.length), 1)[0];
-    } else if (index + 1 < this.tracks.length) next = this.tracks[index + 1].id;
-    else if (this.mode === 'repeat-all' || (!automatic && this.mode === 'repeat-one')) next = this.tracks[0].id;
+    const next = this.nextTrackId(automatic);
+    if (this.mode === 'shuffle') {
+      this.shuffleBag = this.shuffleBag.filter(id => id !== next);
+      this.shuffleNext = null;
+    }
     if (next) await this.play(next);
     else this.stop();
   }
@@ -210,7 +230,7 @@ export class JukeboxRoom extends EventEmitter {
   setMode(mode) {
     this.assertOpen();
     if (!playModes.includes(mode)) throw new UserFacingError('invalidMode');
-    this.mode = mode; this.shuffleBag = []; this.changed();
+    this.mode = mode; this.shuffleBag = []; this.shuffleNext = null; this.changed();
   }
   async remove(id) {
     this.assertOpen();

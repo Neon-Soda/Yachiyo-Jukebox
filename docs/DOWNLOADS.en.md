@@ -18,7 +18,7 @@ If no installer has been published, [build from source](DEVELOPMENT.en.md). Ther
 After downloading, calculate the checksum in PowerShell using the actual file path and compare it with the checksum from the same release:
 
 ```powershell
-Get-FileHash -LiteralPath '.\Yachiyo-1.2.0-Windows-x64.exe' -Algorithm SHA256
+Get-FileHash -LiteralPath '.\Yachiyo-1.3.0-Windows-x64.exe' -Algorithm SHA256
 ```
 
 The version in this filename is an example. A matching checksum checks consistency with the published attachment; it is not a publisher signature or a guarantee of safety.

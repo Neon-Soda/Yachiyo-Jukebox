@@ -44,6 +44,8 @@ The player shows the current title, artwork, duration, and position. Pause / res
 | Repeat one | Repeats the current track when it ends |
 | Shuffle | Chooses subsequent tracks at random |
 
+During playback, the bot downloads and converts one upcoming track. Queue edits update the selection, shuffle prepares the actual next draw, and repeat one reuses the current audio. Skipping to a track that is still downloading continues the same download.
+
 The playlist remains after sequential playback finishes. Adding a new song then starts that new track; adding a collection starts the first track of that import. During playback or pause, new tracks are appended.
 
 ## Shared activity feed

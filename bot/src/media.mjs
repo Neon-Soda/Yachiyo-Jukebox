@@ -36,19 +36,21 @@ export function argsFor(track) {
   return args;
 }
 
-export async function inspect(track, { spawnProcess = spawn, retryDelayMs = 750, timeoutMs = 60000, fallback = publicBilibiliInfo } = {}) {
+export async function inspect(track, { spawnProcess = spawn, retryDelayMs = 750, timeoutMs = 60000, fallback = publicBilibiliInfo, signal } = {}) {
   const deadline = Date.now() + timeoutMs;
   for (let attempt = 1; ; attempt++) {
     try {
-      return await inspectOnce(track, spawnProcess, Math.max(1, deadline - Date.now()));
+      signal?.throwIfAborted();
+      return await inspectOnce(track, spawnProcess, Math.max(1, deadline - Date.now()), signal);
     } catch (error) {
+      signal?.throwIfAborted();
       // Bilibili sometimes returns a successful API response with zero formats.
       // Retry empty formats within one budget; an unreadable initial-state
       // webpage goes straight to the public metadata fallback.
       if (!error.retryEmptyFormats && !error.fallbackPublicMetadata) throw error;
       if (attempt >= 3 || error.fallbackPublicMetadata) {
         if (Date.now() >= deadline) throw new UserFacingError('extractTimeout');
-        const data = await fallback(track, { timeoutMs: Math.min(20000, deadline - Date.now()) });
+        const data = await fallback(track, { timeoutMs: Math.min(20000, deadline - Date.now()), signal });
         const result = { ...track, title: String(data.title || messages.unnamed).slice(0, 150), duration: data.duration, thumbnail: mediaArtwork(data.thumbnail) };
         mediaCache.set(result, { json: JSON.stringify(data), at: Date.now() });
         return result;
@@ -59,9 +61,9 @@ export async function inspect(track, { spawnProcess = spawn, retryDelayMs = 750,
   }
 }
 
-function inspectOnce(track, spawnProcess, timeoutMs) {
+function inspectOnce(track, spawnProcess, timeoutMs, signal) {
   return new Promise((resolve, reject) => {
-    const child = spawnProcess(mediaTool('yt-dlp'), [...argsFor(track), '--dump-single-json', '--skip-download', '--', track.url], { windowsHide: true });
+    const child = spawnProcess(mediaTool('yt-dlp'), [...argsFor(track), '--dump-single-json', '--skip-download', '--', track.url], { windowsHide: true, signal });
     let out = '', stderr = ''; let settled = false;
     const finish = (err, value) => {
       if (settled) return;
@@ -113,22 +115,22 @@ function backupVersions(info) {
   return versions;
 }
 
-export async function prepareDownloadAlternatives(track, prepared, { fallback = publicBilibiliInfo, timeoutMs = 20000 } = {}) {
+export async function prepareDownloadAlternatives(track, prepared, { fallback = publicBilibiliInfo, timeoutMs = 20000, signal } = {}) {
   if (track.platform !== 'BILIBILI') return [];
   const info = JSON.parse(prepared.input);
   const versions = backupVersions(info);
   if (versions.length) return versions.map(data => preparedBilibili(track, JSON.stringify(data)));
   // yt-dlp metadata may omit CDN backups. Only after a failed download, ask
   // the public playback API for fresh authorized URLs (including its backups).
-  const fresh = await fallback(track, { timeoutMs });
+  const fresh = await fallback(track, { timeoutMs, signal });
   return [fresh, ...backupVersions(fresh)].slice(0, 2).map(data => preparedBilibili(track, JSON.stringify(data)));
 }
 
-export async function prepareDownload(track, { inspectTrack = inspect, now = Date.now() } = {}) {
+export async function prepareDownload(track, { inspectTrack = inspect, now = Date.now(), signal } = {}) {
   if (track.platform !== 'BILIBILI') return { args: [...argsFor(track), '-o', '-', '--', track.url] };
   let cached = mediaCache.get(track);
   if (!cached || now - cached.at >= mediaCacheMaxAge) {
-    const refreshed = await inspectTrack(track);
+    const refreshed = await inspectTrack(track, { signal });
     cached = mediaCache.get(refreshed);
     if (!cached) throw new UserFacingError('invalidMetadata');
     mediaCache.set(track, cached);

@@ -1,3 +1,4 @@
+import { NextTrackPreload } from './audio-cache.mjs';
 import { mediaTool } from './media-tools.mjs';
 import { EventEmitter } from 'node:events';
 import { spawn } from 'node:child_process';
@@ -7,6 +8,7 @@ import { UserFacingError } from './messages.mjs';
 export class JukeboxAudio extends EventEmitter {
   constructor(cache) {
     super(); this.cache = cache; this.serial = 0; this.offset = 0; this.active = false;
+    this.upcoming = new NextTrackPreload(cache);
     this.player = createAudioPlayer({ behaviors: { noSubscriber: NoSubscriberBehavior.Pause } });
     this.player.on(AudioPlayerStatus.Idle, () => {
       if (!this.active) return;
@@ -15,9 +17,10 @@ export class JukeboxAudio extends EventEmitter {
     });
     this.player.on('error', () => { if (this.active) { this.stop(); this.emit('failure', { diagnosticStage: 'audio-encode' }); } });
   }
+  preload(track) { this.upcoming.set(track); }
   async start(track, { position = 0, paused = false, signal }) {
     const version = ++this.serial;
-    const lease = await this.cache.get(track, signal);
+    const lease = await this.upcoming.claim(track, signal) ?? await this.cache.get(track, signal);
     if (signal.aborted || this.serial !== version) { lease.release(); throw new UserFacingError('cancelled'); }
     this.lease = lease; this.offset = position;
     const child = spawn(mediaTool('ffmpeg'), ['-hide_banner', '-loglevel', 'error', '-ss', String(position), '-i', lease.file, '-vn', '-ac', '2', '-ar', '48000', '-f', 's16le', 'pipe:1'], { windowsHide: true });

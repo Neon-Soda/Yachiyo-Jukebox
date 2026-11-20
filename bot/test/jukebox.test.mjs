@@ -181,6 +181,38 @@ test('rooms have independent playlists, positions and lifecycle', async () => {
   a.close(); assert.equal(a.tracks.length, 0); assert.equal(b.tracks.length, 1); assert.equal(b.closed, false);
   assert.ok(!JSON.stringify(b.snapshot()).includes('https://'));
 });
+test('preload follows exactly the next queued track through additions, edits, pause, wrap and close', async () => {
+  const r = room(), audio = r.audio;
+  audio.preload = track => { audio.upcoming = track; };
+  await songs(r, 1); await r.play(); assert.equal(audio.upcoming, null);
+  const second = await r.add('https://youtu.be/two'), third = await r.add('https://youtu.be/three');
+  assert.equal(audio.upcoming, second);
+  r.move(third.id, -1); assert.equal(audio.upcoming, third);
+  await r.remove(third.id); assert.equal(audio.upcoming, second);
+  r.pause(); assert.equal(audio.upcoming, null);
+  await r.resume(); assert.equal(audio.upcoming, second);
+  await r.next(true); assert.equal(r.currentId, second.id); assert.equal(audio.upcoming, null);
+  r.setMode('repeat-all'); assert.equal(audio.upcoming, r.tracks[0]);
+  r.setMode('repeat-one'); assert.equal(audio.upcoming, null);
+  r.setMode('repeat-all'); r.close(); assert.equal(audio.upcoming, null);
+});
+
+test('shuffle preloads its actual next draw and redraws if the chosen track is removed', async () => {
+  const r = room('voice', { random: Math.random });
+  let upcoming;
+  r.audio.preload = track => { upcoming = track; };
+  await songs(r, 5); r.setMode('shuffle'); await r.play();
+  assert.ok(upcoming); const chosen = upcoming;
+  r.recordOperation('update'); assert.equal(upcoming, chosen);
+  await r.remove(chosen.id); assert.ok(upcoming); assert.notEqual(upcoming, chosen);
+  const seen = new Set([r.currentId]);
+  for (let i = 1; i < r.tracks.length; i++) {
+    const expected = upcoming.id;
+    await r.next(true); assert.equal(r.currentId, expected);
+    assert.ok(!seen.has(expected)); seen.add(expected);
+  }
+});
+
 test('sequence stops at the end, list loop wraps, single loop does not block manual next', async () => {
   const r = room(); await songs(r, 2); await r.play();
   const [first, second] = r.tracks;

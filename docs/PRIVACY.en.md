@@ -2,7 +2,7 @@
 
 [简体中文](PRIVACY.md) · **English** · [Documentation](README.en.md)
 
-Last updated: 2026-11-19. Covers the functionality described for public version 1.2.0 of this repository.
+Last updated: 2026-11-19. Covers the functionality described for public version 1.3.0 of this repository.
 
 ## Scope and operators
 

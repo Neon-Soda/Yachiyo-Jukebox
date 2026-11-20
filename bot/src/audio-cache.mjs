@@ -6,8 +6,41 @@ import { spawn } from 'node:child_process';
 import { prepareDownload, prepareDownloadAlternatives } from './media.mjs';
 import { UserFacingError } from './messages.mjs';
 
+// A preload holds one cache lease until playback claims it or the queue changes.
+export class NextTrackPreload {
+  constructor(cache) { this.cache = cache; }
+  set(track) {
+    if (this.track?.url === track?.url) return;
+    this.controller?.abort();
+    this.lease?.release();
+    this.track = track; this.lease = null; this.controller = null;
+    if (!track) return;
+    const controller = new AbortController();
+    this.controller = controller;
+    this.cache.get(track, controller.signal).then(lease => {
+      if (controller.signal.aborted) lease.release();
+      else this.lease = lease;
+    }).catch(() => {
+      if (this.controller === controller) this.controller = null;
+    }); // Playback can retry normally when this track is selected.
+  }
+  claim(track, signal) {
+    let result = null;
+    if (this.track?.url === track.url && this.controller && !signal?.aborted) {
+      // Transfer a ready pin, or join the download before releasing its initial consumer.
+      result = this.lease ?? this.cache.get(track, signal).catch(() => null);
+      this.lease = null;
+    }
+    this.set(null);
+    return result;
+  }
+}
+
+const configuredMb = Number(process.env.AUDIO_CACHE_MB ?? 1024);
+const configuredBytes = (Number.isFinite(configuredMb) && configuredMb >= 256 && configuredMb <= 10240 ? configuredMb : 1024) * 1024 ** 2;
+
 export class AudioCache {
-  constructor({ directory = 'data/audio-cache', maxBytes = 1024 ** 3, maxFileBytes = 128 * 1024 ** 2 } = {}) {
+  constructor({ directory = 'data/audio-cache', maxBytes = configuredBytes, maxFileBytes = 128 * 1024 ** 2 } = {}) {
     this.directory = resolve(directory); this.maxBytes = maxBytes; this.maxFileBytes = maxFileBytes;
     this.pending = new Map(); this.pins = new Map(); this.active = 0; this.waiters = [];
   }
@@ -17,17 +50,25 @@ export class AudioCache {
   async get(track, signal) {
     const key = this.key(track);
     if (signal?.aborted) throw new UserFacingError('cancelled');
+    let job = this.pending.get(key);
+    if (!job || job.controller.signal.aborted) {
+      const controller = new AbortController();
+      job = { controller, consumers: 0 };
+      job.ready = this.obtain(track, key, controller.signal).finally(() => {
+        if (this.pending.get(key) === job) this.pending.delete(key);
+      });
+      this.pending.set(key, job);
+    }
     this.pin(key);
+    job.consumers++;
+    const cancel = () => { if (--job.consumers === 0) job.controller.abort(); };
+    signal?.addEventListener('abort', cancel, { once: true });
     try {
-      let pending = this.pending.get(key);
-      if (!pending) {
-        pending = this.obtain(track, key).finally(() => this.pending.delete(key));
-        this.pending.set(key, pending);
-      }
-      const file = await pending;
+      const file = await job.ready;
       if (signal?.aborted) throw new UserFacingError('cancelled');
       return { file, release: () => this.release(key) };
     } catch (error) { this.release(key); throw error; }
+    finally { signal?.removeEventListener('abort', cancel); }
   }
   async prune(reserve = 0) {
     await mkdir(this.directory, { recursive: true });
@@ -44,7 +85,7 @@ export class AudioCache {
     }
     if (size + reserve > this.maxBytes) throw new UserFacingError('cacheFull');
   }
-  async obtain(track, key) {
+  async obtain(track, key, signal) {
     await mkdir(this.directory, { recursive: true });
     const file = join(this.directory, `${key}.mp3`);
     try {
@@ -56,12 +97,16 @@ export class AudioCache {
     this.active++;
     const temporary = join(this.directory, `${key}-${randomUUID()}.part`);
     try {
+      signal.throwIfAborted();
       await this.prune(this.maxFileBytes);
-      const prepared = await prepareDownload(track);
-      await this.downloadWithFallback(track, prepared, temporary);
+      signal.throwIfAborted();
+      const prepared = await prepareDownload(track, { signal });
+      await this.downloadWithFallback(track, prepared, temporary, signal);
       const info = await stat(temporary);
       if (!info.size || info.size >= this.maxFileBytes) throw new UserFacingError('cacheDownloadFailed');
-      const duration = await probeDuration(temporary);
+      signal.throwIfAborted();
+      const duration = await probeDuration(temporary, signal);
+      signal.throwIfAborted();
       if (!(duration > 0) || (track.duration && duration < track.duration - Math.max(5, track.duration * 0.1))) throw new UserFacingError('cacheDownloadFailed');
       await rename(temporary, file);
       return file;
@@ -70,16 +115,18 @@ export class AudioCache {
       this.active--; this.waiters.shift()?.();
     }
   }
-  async downloadWithFallback(track, prepared, path) {
+  async downloadWithFallback(track, prepared, path, signal) {
     const deadline = Date.now() + 180000;
     let candidates = [prepared], lastError;
     for (let attempt = 0; attempt < candidates.length; attempt++) {
+      signal?.throwIfAborted();
       if (Date.now() >= deadline) {
         const error = new UserFacingError('cacheDownloadFailed'); error.diagnosticStage = 'cache-timeout'; throw error;
       }
       if (attempt) await unlink(path).catch(error => { if (error.code !== 'ENOENT') throw error; });
-      try { await this.download(candidates[attempt], path, deadline - Date.now()); return; }
+      try { await this.download(candidates[attempt], path, deadline - Date.now(), signal); return; }
       catch (error) {
+        signal?.throwIfAborted();
         if (track.platform !== 'BILIBILI' || error.diagnosticStage !== 'cache-download') throw error;
         lastError = error;
         if (attempt === 0) {
@@ -87,7 +134,7 @@ export class AudioCache {
           if (remaining > 0) {
             // Never retry transcoding/tool/disk errors, and never expose an
             // upstream response. Both download attempts and metadata share one budget.
-            try { candidates.push(...await prepareDownloadAlternatives(track, prepared, { timeoutMs: Math.min(20000, remaining) })); }
+            try { candidates.push(...await prepareDownloadAlternatives(track, prepared, { timeoutMs: Math.min(20000, remaining), signal })); }
             catch { /* Preserve the original fixed download error. */ }
           }
         }
@@ -95,17 +142,20 @@ export class AudioCache {
     }
     throw lastError;
   }
-  download(prepared, path, timeoutMs = 180000) {
+  download(prepared, path, timeoutMs = 180000, signal) {
+    signal?.throwIfAborted();
     return new Promise((resolve, reject) => {
       const download = spawn(mediaTool('yt-dlp'), ['--max-filesize', '150M', ...prepared.args], { windowsHide: true });
       const ffmpeg = spawn(mediaTool('ffmpeg'), ['-hide_banner', '-loglevel', 'error', '-i', 'pipe:0', '-vn', '-t', '7200', '-ac', '2', '-ar', '48000', '-c:a', 'libmp3lame', '-b:a', '128k', '-fs', String(this.maxFileBytes), '-f', 'mp3', '-y', path], { windowsHide: true });
       let closed = 0, failureStage;
       const kill = stage => { failureStage ??= stage; download.kill(); ffmpeg.kill(); };
+      const cancel = () => kill('cancelled');
+      signal?.addEventListener('abort', cancel, { once: true });
       const timer = setTimeout(() => kill('cache-timeout'), timeoutMs);
       const done = (code, stage) => {
         if (code !== 0) kill(stage);
         if (++closed !== 2) return;
-        clearTimeout(timer);
+        clearTimeout(timer); signal?.removeEventListener('abort', cancel);
         if (failureStage) {
           const error = new UserFacingError('cacheDownloadFailed');
           error.diagnosticStage = failureStage;
@@ -122,9 +172,9 @@ export class AudioCache {
   }
 }
 
-function probeDuration(file) {
+function probeDuration(file, signal) {
   return new Promise((resolve, reject) => {
-    const child = spawn(mediaTool('ffprobe'), ['-v', 'error', '-show_entries', 'format=duration', '-of', 'json', file], { windowsHide: true });
+    const child = spawn(mediaTool('ffprobe'), ['-v', 'error', '-show_entries', 'format=duration', '-of', 'json', file], { windowsHide: true, signal });
     let out = '';
     const timer = setTimeout(() => child.kill(), 15000);
     child.stdout.on('data', b => { out = (out + b).slice(-64000); }); child.stderr.resume();

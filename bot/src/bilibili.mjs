@@ -4,7 +4,7 @@ const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 
 
 // Public, anonymous playback fallback for unavailable page metadata/empty formats.
 // It does not read browser credentials or bypass login/paid-content responses.
-export async function publicBilibiliInfo(track, { fetchImpl = fetch, timeoutMs = 20000 } = {}) {
+export async function publicBilibiliInfo(track, { fetchImpl = fetch, timeoutMs = 20000, signal } = {}) {
   const url = new URL(track.url);
   const match = /^\/video\/(BV[a-zA-Z0-9]{10}|av\d+)\/?$/.exec(url.pathname);
   if (!['www.bilibili.com', 'bilibili.com', 'm.bilibili.com'].includes(url.hostname) || !match) throw new UserFacingError('extractFailed');
@@ -13,10 +13,11 @@ export async function publicBilibiliInfo(track, { fetchImpl = fetch, timeoutMs =
   const query = new URLSearchParams(match[1].startsWith('BV') ? { bvid: match[1] } : { aid: match[1].slice(2) });
   const headers = { 'User-Agent': userAgent, Referer: 'https://www.bilibili.com/' };
   const controller = new AbortController();
+  const requestSignal = signal ? AbortSignal.any([controller.signal, signal]) : controller.signal;
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   let stage = 'webpage';
   const readText = async endpoint => {
-    const response = await fetchImpl(endpoint, { headers, signal: controller.signal });
+    const response = await fetchImpl(endpoint, { headers, signal: requestSignal });
     if (!response.ok) throw new UserFacingError('extractFailed');
     let text = '';
     const decoder = new TextDecoder();
@@ -37,7 +38,7 @@ export async function publicBilibiliInfo(track, { fetchImpl = fetch, timeoutMs =
       const state = /window\.__INITIAL_STATE__\s*=\s*(.*?);\s*\(function/s.exec(webpage);
       video = state && JSON.parse(state[1]).videoData;
     } catch (error) {
-      if (controller.signal.aborted) throw error;
+      if (requestSignal.aborted) throw error;
     }
     if (!video) {
       stage = 'part-list';

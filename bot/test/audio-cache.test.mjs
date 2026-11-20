@@ -3,13 +3,51 @@ import assert from 'node:assert/strict';
 import { mkdtemp, writeFile, readFile, stat, unlink, rmdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { AudioCache } from '../src/audio-cache.mjs';
+import { AudioCache, NextTrackPreload } from '../src/audio-cache.mjs';
 import { UserFacingError } from '../src/messages.mjs';
 
 const track = { platform: 'BILIBILI', url: 'https://www.bilibili.com/video/BV1URHG6zEWq/' };
 const prepared = { input: JSON.stringify({ title: 'Test', duration: 235.333, http_headers: { Referer: 'https://www.bilibili.com/' },
   formats: [{ url: 'https://primary.example/audio', vcodec: 'none', _bilibili_backup_urls: ['https://backup.example/audio', 'https://third.example/audio'] }] }) };
 function failure(stage) { const error = new UserFacingError('cacheDownloadFailed'); error.diagnosticStage = stage; return error; }
+
+test('an in-flight preload transfers to playback without restarting the cache writer', async () => {
+  const cache = new AudioCache(), preload = new NextTrackPreload(cache), jobs = [];
+  cache.obtain = (item, key, signal) => new Promise(resolve => jobs.push({ signal, resolve }));
+  preload.set(track); preload.set({ ...track });
+  const playing = preload.claim(track, new AbortController().signal);
+  assert.equal(jobs.length, 1); assert.equal(jobs[0].signal.aborted, false);
+  jobs[0].resolve('ready.mp3');
+  const lease = await playing;
+  assert.equal(lease.file, 'ready.mp3'); assert.equal(cache.pins.get(cache.key(track)), 1);
+  lease.release(); assert.equal(cache.pins.size, 0);
+});
+
+test('a ready preload stays pinned until claimed and a failed preload can be retried on demand', async () => {
+  const cache = new AudioCache(), preload = new NextTrackPreload(cache);
+  let calls = 0;
+  cache.obtain = async () => { if (++calls === 1) throw failure('cache-download'); return 'ready.mp3'; };
+  preload.set(track); await new Promise(resolve => setImmediate(resolve));
+  preload.set(track); assert.equal(preload.claim(track), null); assert.equal(calls, 1);
+  const retry = await cache.get(track); retry.release();
+  preload.set(track); await new Promise(resolve => setImmediate(resolve));
+  const ready = await preload.claim(track); assert.equal(calls, 3);
+  assert.equal(cache.pins.get(cache.key(track)), 1); ready.release(); assert.equal(cache.pins.size, 0);
+});
+
+test('replacing or clearing a preload cancels obsolete work without cancelling another consumer', async () => {
+  const cache = new AudioCache(), preload = new NextTrackPreload(cache), jobs = [];
+  cache.obtain = (item, key, signal) => new Promise((resolve, reject) => {
+    jobs.push({ signal, resolve }); signal.addEventListener('abort', () => reject(signal.reason), { once: true });
+  });
+  const other = { ...track, url: track.url + '?p=2' };
+  preload.set(track); preload.set(other); preload.set(track);
+  assert.deepEqual(jobs.map(job => job.signal.aborted), [true, true, false]);
+  const playing = cache.get(track);
+  preload.set(null); assert.equal(jobs[2].signal.aborted, false);
+  jobs[2].resolve('playing.mp3'); (await playing).release();
+  assert.equal(cache.pending.size, 0); assert.equal(cache.pins.size, 0);
+});
 
 test('a failed Bilibili download discards partial output and switches to the official backup with preserved metadata', async t => {
   const directory = await mkdtemp(join(tmpdir(), 'yachiyo-cache-test-')), file = join(directory, 'audio.part');
