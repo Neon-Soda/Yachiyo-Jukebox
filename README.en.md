@@ -38,6 +38,8 @@ The desktop application uses **Tauri 2 + Vue 3 + TypeScript + Rust**, with a **N
 - **Shared activity feed:** transient operation notices and the latest five room events keep participants informed; the Activity reduces duplicate chat feedback.
 - **Background operation:** tray status, launch at login, bot recovery, optional SSH tunneling, and reconnection. Closing the window releases the interface while services keep running.
 - **Customization:** Chinese / English, separate desktop themes, and Activity text, colors, logo, default artwork, and importable / exportable themes.
+- **Responsive jukebox** places the player, search and room activity side by side in landscape and respects the phone’s top safe area.
+- **Version checks** look for a newer stable GitHub release when the control window opens and link to its release page.
 - **Local management:** on-demand audio caching, tool version and capability checks, connection status, and manual diagnostic export.
 
 Playback depends on the source, login state, account permissions, and region. A browser login is not automatically shared with the bot.

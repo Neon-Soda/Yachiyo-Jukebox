@@ -106,6 +106,10 @@ Keep Chinese and English READMEs, docs, and tool guides in sync. Use relative do
 
 Project code and documentation contributions use [MIT](../LICENSE). Preserve licensing and attribution for third-party additions. Keep private deployment notes out of public documentation.
 
+## Publishing a stable release
+
+Upload `Yachiyo-<version>-Windows-x64.exe` to the GitHub release and mark it as the latest stable release. Use a tag such as `<version>` or `v<version>`. The app reads GitHub release metadata and links to the release page when it finds a newer version. You can also attach SHA-256 checksums, source archives and release notes.
+
 ## Release archives
 
 After a successful release audit, `npm run dist` creates a version folder containing the installer, matching `.sha256`, and `release.json` (version, archive time, size, and checksum). Keep earlier versions when publishing a new one.

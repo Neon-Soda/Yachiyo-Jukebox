@@ -22,6 +22,7 @@ import StorageView from "./views/StorageView.vue";
 import ToolsView from "./views/ToolsView.vue";
 import ToolsPrompt from "./views/ToolsPrompt.vue";
 import InfoView from "./views/InfoView.vue";
+import UpdatePrompt from "./views/UpdatePrompt.vue";
 
 void initialize();
 </script>
@@ -154,7 +155,7 @@ void initialize();
         >
           <option value="zh-CN">{{ t("中文") }}</option>
           <option value="en">English</option></select
-        ><button
+        ><UpdatePrompt /><button
           id="check-top"
           class="secondary"
           @click="service('check')"

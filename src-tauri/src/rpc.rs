@@ -151,7 +151,7 @@ fn theme_id(value: &Value) -> Result<&str> {
     }
     Ok(id)
 }
-fn project_link(destination: &str) -> Result<String> {
+pub(crate) fn project_link(destination: &str) -> Result<String> {
     let suffix = match destination {
         "source" => "",
         "releases" => "/releases",
@@ -174,6 +174,9 @@ fn project_link(destination: &str) -> Result<String> {
 async fn dispatch(app: &AppHandle, state: &Desktop, operation: &str, data: Value) -> Result<Value> {
     if matches!(operation, "start" | "stop" | "restart" | "check") {
         return state.supervisor.action(operation).await;
+    }
+    if matches!(operation, "checkForUpdate" | "skipUpdate" | "openUpdateRelease") {
+        return crate::updater::dispatch(app, state, operation, data).await;
     }
     // Serialize filesystem updates, including native dialogs. Heartbeat and
     // tray control use a different actor and are never paused by a dialog.

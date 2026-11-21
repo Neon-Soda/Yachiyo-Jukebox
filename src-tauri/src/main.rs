@@ -7,6 +7,7 @@ mod rpc;
 mod shell;
 mod supervisor;
 mod tools;
+mod updater;
 use std::{
     path::PathBuf,
     sync::{
@@ -103,6 +104,7 @@ fn main() {
                 quitting: AtomicBool::new(false),
                 isolated,
                 operations: tokio::sync::Mutex::new(()),
+                update: tokio::sync::Mutex::new(None),
                 qa_port,
                 tray_key: Mutex::new(String::new()),
             });

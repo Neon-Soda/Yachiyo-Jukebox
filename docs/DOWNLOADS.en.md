@@ -18,10 +18,16 @@ If no installer has been published, [build from source](DEVELOPMENT.en.md). Ther
 After downloading, calculate the checksum in PowerShell using the actual file path and compare it with the checksum from the same release:
 
 ```powershell
-Get-FileHash -LiteralPath '.\Yachiyo-1.3.1-Windows-x64.exe' -Algorithm SHA256
+Get-FileHash -LiteralPath '.\Yachiyo-1.2.0-Windows-x64.exe' -Algorithm SHA256
 ```
 
 The version in this filename is an example. A matching checksum checks consistency with the published attachment; it is not a publisher signature or a guarantee of safety.
+
+## Checking for updates and installing over the existing copy
+
+Starting with 1.2.0, opening the desktop window checks the latest stable GitHub release. Use **Check for version updates** to check manually. The dialog can open the release page, cancel, or skip automatic reminders for that version.
+
+Download and run the Windows installer from the release page. The installer looks up the last installation folder for the current Windows user. Use that folder to keep settings, credentials and media tool paths. Upgrading restarts the bot and clears active jukebox queues.
 
 ## Playback tools
 

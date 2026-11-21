@@ -25,6 +25,7 @@ pub struct Desktop {
     pub quitting: AtomicBool,
     pub isolated: bool,
     pub operations: tokio::sync::Mutex<()>,
+    pub update: tokio::sync::Mutex<Option<crate::updater::Update>>,
     pub qa_port: Option<u16>,
     pub tray_key: Mutex<String>,
 }

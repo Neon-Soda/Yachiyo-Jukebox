@@ -8,6 +8,10 @@ Join a regular server voice channel and use `/jukebox`, or open the configured Y
 
 Rooms and playlists are isolated by voice channel. One bot can serve only one voice channel at a time within a server; another channel cannot take over an occupied connection. Control requests verify that the user is still in the corresponding voice channel.
 
+## Responsive layout
+
+On wide landscape viewports, the player and progress bar sit on the left, with search, links and the room feed stacked on the right. The feed grows with the available height and scrolls through the latest five events. Portrait keeps the single-column layout. On phones, the room name and connection status sit next to the End button, clear of the top safe area.
+
 ## Search and links
 
 Search by song title or “title + artist,” or paste a supported music / video link. The results dialog shows available artwork, titles, and durations. Select a result to add it to the playlist.
@@ -54,7 +58,7 @@ The playlist remains after sequential playback finishes. Adding a new song then 
 
 ## Shared activity feed
 
-Participants in the same room share playback state. Successful actions produce a notice that slowly rises and fades. The bottom of the page keeps the latest five room events, including the actor's display name and action. While the Activity is active, relevant feedback is primarily shown there to avoid duplicate chat messages.
+Participants in the same room share playback state. Successful actions produce a notice that slowly rises and fades. The room feed keeps the latest five events, including the actor's display name and action. While the Activity is active, relevant feedback is primarily shown there to avoid duplicate chat messages.
 
 Other room members can also add, pause, and switch tracks. The feed helps people coordinate; it does not grant one person exclusive control.
 

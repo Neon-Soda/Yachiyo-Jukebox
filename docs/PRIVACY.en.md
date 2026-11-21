@@ -2,7 +2,7 @@
 
 [简体中文](PRIVACY.md) · **English** · [Documentation](README.en.md)
 
-Last updated: 2026-11-19. Covers the functionality described for public version 1.3.1 of this repository.
+Last updated: 2026-11-19. Covers the functionality described for public version 1.2.0 of this repository.
 
 ## Scope and operators
 
@@ -32,6 +32,7 @@ Installed builds keep `user-data/` beneath the installation directory. Developme
 - **Discord:** bot login, server and voice state, Activity OAuth, identity and channel checks, and voice audio transmission. Activity authorization uses the `identify` scope; the bot uses its own credentials for required APIs.
 - **Music / video platforms and their CDNs:** your actions send search queries or media links to retrieve metadata, artwork, and audio. Where needed, requests use cookies you explicitly configured for that platform. These services receive the connection IP and request information.
 - **Your network services:** Activity pages and API requests travel through the configured HTTPS endpoint and optional SSH tunnel / proxy. VPS, reverse proxy, DNS, and network providers may keep connection and access records according to their configuration.
+- **GitHub update checks** send the request IP and current app version to GitHub when you open the desktop window or check manually. The app stores the skipped version locally.
 - **External pages you open:** GitHub, upstream tool downloads, and help pages are opened in the system browser. If WebView2 is missing, the installer may contact Microsoft for its runtime bootstrapper.
 
 The current project code has no author-operated advertising, behavioral telemetry, central user-registration, or automatic diagnostic upload service, and no feature for selling data through such services. Normal playback contacts third parties. This should not be read as “fully offline” or “third parties collect no data.” Third-party clients, runtimes, and websites have their own privacy rules.

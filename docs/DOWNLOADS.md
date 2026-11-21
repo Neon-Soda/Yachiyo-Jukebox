@@ -18,10 +18,16 @@
 下载完成后，在 PowerShell 使用实际文件路径计算摘要，与同一 Release 的校验文件比较：
 
 ```powershell
-Get-FileHash -LiteralPath '.\Yachiyo-1.3.1-Windows-x64.exe' -Algorithm SHA256
+Get-FileHash -LiteralPath '.\Yachiyo-1.2.0-Windows-x64.exe' -Algorithm SHA256
 ```
 
 文件名中的版本仅为示例。摘要相同可用于检查文件是否与发布附件一致，不等于发布者数字签名或安全性保证。
+
+## 检查版本与覆盖安装
+
+从 1.2.0 起，打开桌面主窗口会检查 GitHub 的最新正式发行。点击「检查版本更新」可手动检查。弹窗可打开对应发布页、取消，或跳过该版本的自动提醒。
+
+在发布页下载新的 Windows 安装包并运行。安装器会尝试读取当前 Windows 用户上次使用的安装目录。沿用原目录安装即可保留设置、凭据和媒体工具配置。升级会重启 Bot，正在使用的点歌台歌单会清空。
 
 ## 播放所需工具
 

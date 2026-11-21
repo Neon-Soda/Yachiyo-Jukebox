@@ -1,6 +1,6 @@
 [package]
 name = "yachiyo-desktop"
-version = "1.3.1"
+version = "1.2.0"
 license = "MIT"
 authors = ["Neon-Soda"]
 repository = "https://github.com/Neon-Soda/Yachiyo-Jukebox"
@@ -20,6 +20,7 @@ tauri-plugin-single-instance = "2"
 tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+semver = "1"
 tokio = { version = "1", features = ["full"] }
 reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
 axum = "0.8"
